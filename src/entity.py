@@ -24,21 +24,27 @@ class Entity:
 class CircleEntity(Entity):
 	def __init__(self, p_position: Vec2, p_radius: float, p_speed: float = 100.0, p_health: float = 100.0):
 		super().__init__(p_position, p_speed, p_health)
+		self.m_shape = "circle"
 		self.m_renderable = CircleRenderable(p_radius)
 		self.m_radius = p_radius
-		self.m_shape = "circle"
 
 	def draw(self, p_screen):
 		self.m_renderable.draw(p_screen, self.m_position)
 
+import math
 class RectangleEntity(Entity):
 	def __init__(self, p_position: Vec2, p_dimensions: Vec2, p_speed: float = 100.0, p_health: float = 100.0):
 		super().__init__(p_position, p_speed, p_health)
+		self.m_shape = "rectangle"
 		self.m_renderable = RectangleRenderable(p_dimensions)
 		self.m_dimensions = p_dimensions
-		self.m_shape = "rectangle"
+		self.m_halfDimensions = 0.5 * p_dimensions
+		self.m_theta = math.pi * 0.5 #looking up so width and height make sense
+		self.m_axisX = Vec2(math.cos(self.m_theta), math.sin(self.m_theta)) #atomic vectors i and j to determine the rotation
+		self.m_axisY = Vec2(-math.sin(self.m_theta), math.cos(self.m_theta))
 
 	def draw(self, p_screen):
-		self.m_renderable.draw(p_screen, self.m_position)
+		self.m_renderable.draw(p_screen, self.m_position, self.m_theta)
 
-	
+	def setRotation(self, p_theta: float): #rotation in radians
+		self.m_theta = p_theta

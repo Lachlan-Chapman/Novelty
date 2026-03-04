@@ -70,6 +70,8 @@ def main():
 		screen.fill((20, 20, 26))
 		player.draw(screen)
 		enemy.draw(screen)
+
+		rect.m_theta += delta_time * 10
 		rect.draw(screen)
 
 		pygame.display.flip()
