@@ -2,7 +2,9 @@ import sys
 import pygame
 
 from src.vector import Vec2
-from src.entity import Player, CircleEnemy
+from src.entity import RectangleEntity, CircleEntity
+from src.player import Player
+from src.enemy import CircleEnemy
 
 
 def main():
@@ -21,7 +23,7 @@ def main():
 			window_dimensions.x // 2,
 			window_dimensions.y // 2
 		),
-		18,
+		Vec2(18, 18),
 		360
 	)
 
@@ -36,7 +38,13 @@ def main():
 		360
 	)
 
-	
+	rect = RectangleEntity(
+		Vec2(
+			window_dimensions.x // 4,
+			window_dimensions.y // 4
+		),
+		Vec2(20, 30)
+	)
 
 	running = True
 	while running:
@@ -56,11 +64,13 @@ def main():
 			window_dimensions
 		)
 
-		print(enemy.collideWith(player))
+		player.collideWith(enemy)
+		player.collideWith(rect)
 
 		screen.fill((20, 20, 26))
 		player.draw(screen)
 		enemy.draw(screen)
+		rect.draw(screen)
 
 		pygame.display.flip()
 	
@@ -69,3 +79,14 @@ def main():
 
 if __name__ == "__main__":
 	main()
+
+#TODO
+#enemy class - DONE
+#collision - DONE
+#bullet object
+#shooting
+#player rotation with shooting
+#enemy and bullet collision
+#enemy death
+#remove dead enemies
+#enemy spawing

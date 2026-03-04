@@ -1,68 +1,44 @@
 import pygame
 from src.vector import Vec2
-class CircleRenderable:
-	def __init__(self, p_radius: float):
-		self.m_radius = p_radius
-		self.m_color = (255, 0, 0)
 
-	def setColor(self, p_color):
-		self.m_color= p_color
-
-	def draw(self, p_screen, p_position: Vec2):
-		pygame.draw.circle(
-			p_screen,
-			self.m_color,
-			(int(p_position.x), int(p_position.y)),
-			self.m_radius
-		)
-
-from src.collision import CircleCollider
-class CircleEntity:
-	def __init__(self, p_position: Vec2, p_radius: float, p_speed: float, p_health: float = 100.0):
-		self.m_renderable = CircleRenderable(p_radius)
-		self.m_collider = CircleCollider(p_position, p_radius)
-		
+from src.collision import Collider
+from src.renderable import CircleRenderable, RectangleRenderable
+class Entity:
+	def __init__(self, p_position: Vec2, p_speed: float = 100, p_health: float = 100.0):
+		self.m_collider = Collider()
+		self.m_position = p_position
 		self.m_speed = p_speed
 		self.m_health = p_health
 		self.m_alive = True
-
-	def draw(self, p_screen):
-		self.m_renderable.draw(p_screen, self.m_collider.m_position)
+		self.m_shape = "base"
 
 	def collideWith(self, p_other):
-		did_collide = self.m_collider.hit(p_other)
+		did_collide = self.m_collider.overlaps(self, p_other)
+		print(f"{self.m_shape} {did_collide} collided")
 		if did_collide:
-			self.m_renderable.setColor((0, 255, 0))
+			p_other.m_renderable.setColor((0, 255, 0))
 		else:
-			self.m_renderable.setColor((255, 0, 0))
+			p_other.m_renderable.setColor((255, 0, 0))
 		return did_collide
 
+class CircleEntity(Entity):
+	def __init__(self, p_position: Vec2, p_radius: float, p_speed: float = 100.0, p_health: float = 100.0):
+		super().__init__(p_position, p_speed, p_health)
+		self.m_renderable = CircleRenderable(p_radius)
+		self.m_radius = p_radius
+		self.m_shape = "circle"
 
-class Player(CircleEntity):	
-	def move(self, p_keys, p_delta_time, p_window_dimensions: Vec2):
-		move = Vec2()
+	def draw(self, p_screen):
+		self.m_renderable.draw(p_screen, self.m_position)
 
-		if p_keys[pygame.K_w]:
-			move.y -= 1.0
-		if p_keys[pygame.K_a]:
-			move.x -= 1.0
-		if p_keys[pygame.K_s]:
-			move.y += 1.0
-		if p_keys[pygame.K_d]:
-			move.x += 1.0
-		move *= self.m_speed * p_delta_time
-		self.m_collider.m_position += move
+class RectangleEntity(Entity):
+	def __init__(self, p_position: Vec2, p_dimensions: Vec2, p_speed: float = 100.0, p_health: float = 100.0):
+		super().__init__(p_position, p_speed, p_health)
+		self.m_renderable = RectangleRenderable(p_dimensions)
+		self.m_dimensions = p_dimensions
+		self.m_shape = "rectangle"
 
-		if self.m_collider.m_position.x < 0:
-			self.m_collider.m_position.x = 0
-		if self.m_collider.m_position.x > p_window_dimensions.x:
-			self.m_collider.m_position.x = p_window_dimensions.x
+	def draw(self, p_screen):
+		self.m_renderable.draw(p_screen, self.m_position)
 
-		if self.m_collider.m_position.y < 0:
-			self.m_collider.m_position.y = 0
-		if self.m_collider.m_position.y > p_window_dimensions.y:
-			self.m_collider.m_position.y = p_window_dimensions.y
-
-class CircleEnemy(CircleEntity):
-	def target(self, p_other: Player):
-		self.m_target = p_other
+	
