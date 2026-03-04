@@ -2,7 +2,7 @@ import sys
 import pygame
 
 from src.vector import Vec2
-from src.entity import Player
+from src.entity import Player, CircleEnemy
 
 
 def main():
@@ -25,6 +25,19 @@ def main():
 		360
 	)
 
+	player.m_renderable.setColor((255, 255, 255))
+
+	enemy = CircleEnemy(
+		Vec2(
+			window_dimensions.x // 3,
+			window_dimensions.y // 3
+		),
+		18,
+		360
+	)
+
+	
+
 	running = True
 	while running:
 		delta_time = clock.tick(fps) / 1000.0
@@ -43,8 +56,11 @@ def main():
 			window_dimensions
 		)
 
+		print(enemy.collideWith(player))
+
 		screen.fill((20, 20, 26))
 		player.draw(screen)
+		enemy.draw(screen)
 
 		pygame.display.flip()
 	

@@ -17,7 +17,7 @@ class CircleRenderable:
 		)
 
 from src.collision import CircleCollider
-class Player:
+class CircleEntity:
 	def __init__(self, p_position: Vec2, p_radius: float, p_speed: float, p_health: float = 100.0):
 		self.m_renderable = CircleRenderable(p_radius)
 		self.m_collider = CircleCollider(p_position, p_radius)
@@ -29,6 +29,16 @@ class Player:
 	def draw(self, p_screen):
 		self.m_renderable.draw(p_screen, self.m_collider.m_position)
 
+	def collideWith(self, p_other):
+		did_collide = self.m_collider.hit(p_other)
+		if did_collide:
+			self.m_renderable.setColor((0, 255, 0))
+		else:
+			self.m_renderable.setColor((255, 0, 0))
+		return did_collide
+
+
+class Player(CircleEntity):	
 	def move(self, p_keys, p_delta_time, p_window_dimensions: Vec2):
 		move = Vec2()
 
@@ -52,3 +62,7 @@ class Player:
 			self.m_collider.m_position.y = 0
 		if self.m_collider.m_position.y > p_window_dimensions.y:
 			self.m_collider.m_position.y = p_window_dimensions.y
+
+class CircleEnemy(CircleEntity):
+	def target(self, p_other: Player):
+		self.m_target = p_other

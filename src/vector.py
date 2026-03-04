@@ -4,12 +4,11 @@ class Vec2:
 		self.x = p_x
 		self.y = p_y
 	
-	
 	def __add__(self, p_other):
 		return Vec2(self.x + p_other.x, self.y + p_other.y)
 
 	def __sub__(self, p_other):
-		return Vec2(self.x - p_other.x, self.y - p_other)
+		return Vec2(self.x - p_other.x, self.y - p_other.y)
 	
 	def __mul__(self, p_other):
 		return Vec2(self.x * p_other.x, self.y * p_other.y)

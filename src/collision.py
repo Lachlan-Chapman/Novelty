@@ -5,7 +5,7 @@ class CircleCollider:
 		self.m_radius = p_radius
 	
 	def hit(self, p_other) -> bool:
-		dist = p_other.m_postion - self.m_position
+		dist = p_other.m_collider.m_position - self.m_position
 		mag = dist.magnitude()
 		if mag <= 2*self.m_radius:
 			return True
