@@ -19,7 +19,8 @@ class Vec2:
 	def __imul__(self, p_scalar):
 		return Vec2(self.x * p_scalar, self.y * p_scalar)
 
-
+	def __eq__(self, p_other):
+		return self.x == p_other.x and self.y == p_other.y
 	def magnitude(self):
 		return math.sqrt(self.x * self.x + self.y * self.y)
 	
@@ -34,3 +35,6 @@ class Vec2:
 	
 	def __repr__(self):
 		return f"({self.x}, {self.y})"
+	
+	def dot(self, p_other):
+		return (self.x * p_other.x) + (self.y * p_other.y)

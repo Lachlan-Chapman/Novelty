@@ -29,15 +29,6 @@ def main():
 
 	player.m_renderable.setColor((255, 255, 255))
 
-	enemy = CircleEnemy(
-		Vec2(
-			window_dimensions.x // 3,
-			window_dimensions.y // 3
-		),
-		18,
-		360
-	)
-
 	rect = RectangleEntity(
 		Vec2(
 			window_dimensions.x // 4,
@@ -57,6 +48,7 @@ def main():
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
 				running = False
 		
+		#move entities
 		keys = pygame.key.get_pressed()
 		player.move(
 			keys,
@@ -64,14 +56,15 @@ def main():
 			window_dimensions
 		)
 
-		player.collideWith(enemy)
+		theta_prime = rect.m_theta + delta_time * 0
+		rect.setRotation(theta_prime)
+		
+		#collision
 		player.collideWith(rect)
-
+		
+		#render
 		screen.fill((20, 20, 26))
 		player.draw(screen)
-		enemy.draw(screen)
-
-		rect.m_theta += delta_time * 10
 		rect.draw(screen)
 
 		pygame.display.flip()
@@ -84,7 +77,18 @@ if __name__ == "__main__":
 
 #TODO
 #enemy class - DONE
-#collision - DONE
+#SAT (seperated axis theorem) collision
+	#get shape vertices
+	#get shape edge normals
+	#filter duplicate normals (maybe)
+	#filter opposing normals (maybe)
+	#for each axis, 
+		#for each shape
+			#project all vertices of a shape to it
+			#find the min and max then we have shape as an interval for that axis
+		#compare min and max of shapes together, if there is no overlap return False (no collision)
+		#if there is a collision on this axis, continue
+	#return True
 #bullet object
 #shooting
 #player rotation with shooting

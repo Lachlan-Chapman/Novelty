@@ -1,5 +1,9 @@
 import pygame
 from src.vector import Vec2
+import math
+
+to_degrees = 180 / math.pi
+
 class Renderable:
 	def __init__(self):
 		self.m_color = (255, 255, 0)
@@ -33,7 +37,7 @@ class RectangleRenderable(Renderable):
 		)
 		surface = pygame.Surface((dimensions.x, dimensions.y), pygame.SRCALPHA)
 		surface.fill(self.m_color)
-		angle_deg = -(p_theta - math.pi * 0.5) * 57.29577951308232 #pygame uses degs for some reaso | ALSO pygame treats 0 degrees as upright?? not to the right?? so we have to offset so it makes sense. in screen coords going theta 0 -> 2pi it should rotate clockwise cuz y is down
+		angle_deg = -p_theta * to_degrees
 		rotated_surface = pygame.transform.rotate(surface, angle_deg)
 		rotated_rect = rotated_surface.get_rect(
 			center = (

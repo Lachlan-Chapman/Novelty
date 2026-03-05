@@ -67,3 +67,15 @@ class Collider:
 			#print("rectangle rectangle collide")
 			return self.collideRectangleRectangle(p_a, p_b)
 		return False #default if its not one of those types
+	
+	def collideSAT(self, p_a, p_b):
+		p_a.updateGeometry() #only SAT needs vertices and normals to be accurate, so this allows for only doing all that math each collision over each frame
+		p_b.updateGeometry() #make sure shapes vertices and surface are all set before we start doing collision logic
+		edge_normals = p_a.getEdgeNormals() + p_b.getEdgeNormals() #combined lists of both shapes local axes
+		for axis in edge_normals:
+			a_min_max = p_a.project(axis)
+			b_min_max = p_b.project(axis)
+
+			if a_min_max.y < b_min_max.x or b_min_max.y < a_min_max.x:
+				return False #found at least 1 axis they dont touch on
+		return True
