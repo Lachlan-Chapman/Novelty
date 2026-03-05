@@ -1,0 +1,1 @@
+The various types of energy consumed by [[Production]] [[Research]] [[Weapons]] 

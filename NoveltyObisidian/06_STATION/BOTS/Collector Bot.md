@@ -1,0 +1,1 @@
+simple bot that goes out and gathers resources for the player that are floating from destroyed asteroids using [[Grabber]]. player can not queue collection is has to wait for idle grabbers

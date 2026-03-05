@@ -1,0 +1,1 @@
+The home base where production of items and consumables takes place

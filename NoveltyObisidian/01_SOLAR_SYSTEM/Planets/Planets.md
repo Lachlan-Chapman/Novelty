@@ -1,0 +1,1 @@
+Planets are specific types [[Fossilised]] [[Metallic Core]] [[Radioactive]] [[Technological]]

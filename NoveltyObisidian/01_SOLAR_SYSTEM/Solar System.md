@@ -1,0 +1,1 @@
+Has a [[Sun]] [[Planets]] [[Asteroid Belt]]

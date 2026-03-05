@@ -1,0 +1,1 @@
+apart of the [[Weapons]] uses electricity to provide constant firing not needing to reload. If there is [[Bullets]] available then it will fire and of course constant power supply
