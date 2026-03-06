@@ -29,6 +29,7 @@ class Collider:
 		closest_world_point = p_rectangle.m_position + (p_rectangle.m_axes[0] * closest_point.x) + (p_rectangle.m_axes[1] * closest_point.y) #convert back into the true world space out of this rect origin axis aligned world
 		delta = p_circle.m_position - closest_world_point #now go to the circle from the closest point on the rect
 		delta_len = delta.length() #sqaure distance, use magnitude() for typical ||v|| sizing
+		# print(f"{delta_len} | {p_circle.m_radius * p_circle.m_radius}")
 		return (delta_len) < (p_circle.m_radius * p_circle.m_radius) #if the dist to circle is < than the circle radius we must be colliding
 
 	def collideSAT(self, p_a, p_b) -> bool: #for rect to rect collision

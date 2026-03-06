@@ -1,53 +1,50 @@
 import sys
 import pygame
+pygame.init() #immediatly initialize before ANY OTHER object creation
+from src.window import WINDOW
 
 from src.vector import Vec2
 from src.entity import RectangleEntity, CircleEntity
 from src.player import Player
 from src.enemy import CircleEnemy
 
+from src.entityRegistry import ENTITY_REGISTRY #the instance of the registry not the class
+from src.time import TIME
 
 def main():
-	pygame.init()
-
-	fps = 120
-
-	window_dimensions = Vec2(960, 540)
-	screen = pygame.display.set_mode((window_dimensions.x, window_dimensions.y))
-	pygame.display.set_caption("Pygame Heartbeat")
-
-	clock = pygame.time.Clock()
-
 	player = Player(
-		Vec2(
-			window_dimensions.x // 2,
-			window_dimensions.y // 2
+		p_position = Vec2(
+			WINDOW.m_width // 2,
+			WINDOW.m_height // 2
 		),
-		Vec2(18, 18),
-		360
+		p_dimensions = Vec2(18, 18),
+		p_speed = 360
 	)
 
 	player.m_renderable.setColor((255, 255, 255))
+	ENTITY_REGISTRY.add(player)
 
 	rect = RectangleEntity(
-		Vec2(
-			window_dimensions.x // 4,
-			window_dimensions.y // 4
+		p_position = Vec2(
+			WINDOW.m_width // 4,
+			WINDOW.m_height // 4
 		),
-		Vec2(20, 30)
+		p_dimensions = Vec2(20, 30)
 	)
+	ENTITY_REGISTRY.add(rect)
 
 	circ = CircleEntity(
-		Vec2(
-			window_dimensions.x // 3,
-			window_dimensions.y // 3
+		p_position = Vec2(
+			WINDOW.m_width // 3,
+			WINDOW.m_height // 3
 		),
-		15
+		p_radius = 15
 	)
+	ENTITY_REGISTRY.add(circ)
 
 	running = True
 	while running:
-		delta_time = clock.tick(fps) / 1000.0
+		TIME.update()
 
 		#event handling
 		for event in pygame.event.get():
@@ -55,30 +52,27 @@ def main():
 				running = False
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
 				running = False
-		
-		#move entities
+		#Gather Inputs
 		keys = pygame.key.get_pressed()
-		player.move(
-			keys,
-			delta_time,
-			window_dimensions
-		)
-
-		theta_prime = rect.m_theta + delta_time * 0
-		rect.setRotation(theta_prime)
 		
-		#collision
-		player.collideWith(rect)
-		player.collideWith(circ)
-		
-		#render
-		screen.fill((20, 20, 26))
-		rect.draw(screen)
-		circ.draw(screen)
-		player.draw(screen)
+		#Entity Actions
+		player.shoot(keys)
 
-		pygame.display.flip()
+		#Update Entity Positions
+		player.move(keys)
+
+		#Check Collisions
+		ENTITY_REGISTRY.handleCollision()
+
+		#Clean Up
+		ENTITY_REGISTRY.removeDead()
+		
+		#Render
+		WINDOW.m_screen.fill((20, 20, 26)) #clears screen with given color
+		ENTITY_REGISTRY.draw()
+		pygame.display.flip() #swap graphics buffer to display the render of this loop
 	
+	#Safely Exit
 	pygame.quit()
 	sys.exit(0)
 
@@ -99,12 +93,19 @@ if __name__ == "__main__":
 		#compare min and max of shapes together, if there is no overlap return False (no collision)
 		#if there is a collision on this axis, continue
 	#return True
-#OOB circle to rectangle collison allowing for rotated rects
+#OOB circle to rectangle collison allowing for rotated rects - DONE
 	#convert circle into axis alligned rect space with rect at (0, 0). so we are rotating the world and shifting to make the rect the center
 	#get closest point in/on rect to the circle (the closest point can be in the rect not just on the edge)
 	#get distance from closest point to circle
 	#check if the distance to the circle from the closest point is < radius which would mean collision
-#bullet object
+#bullet object - DONE
+#gobal list of all entities - DONE
+	#sweep to draw, update pos etc
+	#naive (o^2) check for collison
+	#sweep any 0 health enemies delete || outside the window
+#gobal time - DONE
+#global window - DONE
+#engine level damage gating - DONE
 #shooting
 #player rotation with shooting
 #enemy and bullet collision
