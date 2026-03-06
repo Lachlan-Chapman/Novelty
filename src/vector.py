@@ -11,10 +11,14 @@ class Vec2:
 		return Vec2(self.x - p_other.x, self.y - p_other.y)
 	
 	def __mul__(self, p_other):
-		return Vec2(self.x * p_other.x, self.y * p_other.y)
+		if isinstance(p_other, (int, float)): #scalar multiplication
+			return Vec2(self.x * p_other, self.y * p_other)
+		if isinstance(p_other, Vec2):
+			return Vec2(self.x * p_other.x, self.y * p_other.y)
+		return NotImplemented
 
 	def __rmul__(self, p_scalar):
-		return Vec2(self.x * p_scalar, self.y * p_scalar)
+		return self.__mul__(p_scalar)
 	
 	def __imul__(self, p_scalar):
 		return Vec2(self.x * p_scalar, self.y * p_scalar)

@@ -37,6 +37,14 @@ def main():
 		Vec2(20, 30)
 	)
 
+	circ = CircleEntity(
+		Vec2(
+			window_dimensions.x // 3,
+			window_dimensions.y // 3
+		),
+		15
+	)
+
 	running = True
 	while running:
 		delta_time = clock.tick(fps) / 1000.0
@@ -61,11 +69,13 @@ def main():
 		
 		#collision
 		player.collideWith(rect)
+		player.collideWith(circ)
 		
 		#render
 		screen.fill((20, 20, 26))
-		player.draw(screen)
 		rect.draw(screen)
+		circ.draw(screen)
+		player.draw(screen)
 
 		pygame.display.flip()
 	
@@ -77,7 +87,7 @@ if __name__ == "__main__":
 
 #TODO
 #enemy class - DONE
-#SAT (seperated axis theorem) collision
+#SAT (seperated axis theorem) collision - DONE
 	#get shape vertices
 	#get shape edge normals
 	#filter duplicate normals (maybe)
@@ -89,6 +99,11 @@ if __name__ == "__main__":
 		#compare min and max of shapes together, if there is no overlap return False (no collision)
 		#if there is a collision on this axis, continue
 	#return True
+#OOB circle to rectangle collison allowing for rotated rects
+	#convert circle into axis alligned rect space with rect at (0, 0). so we are rotating the world and shifting to make the rect the center
+	#get closest point in/on rect to the circle (the closest point can be in the rect not just on the edge)
+	#get distance from closest point to circle
+	#check if the distance to the circle from the closest point is < radius which would mean collision
 #bullet object
 #shooting
 #player rotation with shooting

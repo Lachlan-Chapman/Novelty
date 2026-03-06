@@ -12,8 +12,18 @@ class Entity:
 		self.m_alive = True
 		self.m_shape = "base"
 
+		self.m_dirty_geometry = True #immediate update when called upon
+
+	def setRotation(self, p_theta: float): #rotation in radians
+		self.m_theta = p_theta
+		self.m_dirty_geometry = True
+
+	def setPosition(self, p_position: Vec2):
+		self.m_position = p_position
+		self.m_dirty_geometry = True
+
 	def collideWith(self, p_other):
-		did_collide = self.m_collider.collideSAT(self, p_other)
+		did_collide = self.m_collider.overlaps(self, p_other)
 		#print(f"{self.m_shape} + {p_other.m_shape} {did_collide} collided")
 		if did_collide:
 			p_other.m_renderable.setColor((0, 255, 0))
@@ -47,18 +57,11 @@ class RectangleEntity(Entity):
 		self.m_axisY = Vec2(-math.sin(self.m_theta), math.cos(self.m_theta))
 
 		self.m_dirty_geometry = True
+		
 
 	def draw(self, p_screen):
 		self.m_renderable.draw(p_screen, self.m_position, self.m_theta)
 
-	def setRotation(self, p_theta: float): #rotation in radians
-		self.m_theta = p_theta
-		self.m_dirty_geometry = True
-
-	def setPosition(self, p_position: Vec2):
-		self.m_position = p_position
-		self.m_dirty_geometry = True
-	
 	def updateGeometry(self):
 		if not self.m_dirty_geometry:
 			return #no need to clean them leave state as is
