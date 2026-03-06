@@ -5,7 +5,7 @@ from src.collision import Collider
 from src.renderable import CircleRenderable, RectangleRenderable
 from src.window import WINDOW
 class Entity:
-	def __init__(self, p_position: Vec2, p_speed: float = 100, p_health: float = 1000.0, p_damage: float = 0):
+	def __init__(self, p_position: Vec2 = Vec2(0.0), p_speed: float = 100, p_rotationSpeed: float = 0.5, p_health: float = 1000.0, p_damage: float = 0):
 		self.m_collider = Collider()
 		self.m_position = p_position
 		self.m_direction = Vec2()
@@ -17,6 +17,7 @@ class Entity:
 
 		self.m_damage = p_damage
 		self.m_speed = p_speed
+		self.m_rotationSpeed = p_rotationSpeed
 		
 		self.m_health = p_health
 		self.m_alive = True
@@ -27,7 +28,7 @@ class Entity:
 		self.m_theta = p_theta
 		self.m_dirty_geometry = True
 
-	def offsetPosition(self, p_delta: float): #doesnt set but adds the delta rotation
+	def offsetRotation(self, p_delta: float): #doesnt set but adds the delta rotation
 		self.m_theta += p_delta
 		self.m_dirty_geometry = True
 
@@ -49,7 +50,6 @@ class Entity:
 		self.m_health -= p_damage
 		if self.m_health <= 0:
 			self.m_alive = False
-		print(f"Took {p_damage} Damage | Health: {self.m_health}")
 
 	def heal(self, p_health: float):
 		self.m_health += p_health
@@ -81,8 +81,13 @@ class Entity:
 		raise NotImplementedError
 	
 class CircleEntity(Entity):
-	def __init__(self, p_position: Vec2, p_radius: float, p_speed: float = 100.0, p_health: float = 100.0, p_damage: float = 0):
-		super().__init__(p_position, p_speed, p_health, p_damage)
+	def __init__(self, p_position: Vec2, p_radius: float, p_speed: float = 100.0, p_rotationSpeed: float = 10, p_health: float = 100.0, p_damage: float = 0):
+		super().__init__(
+			p_position = p_position,
+			p_speed = p_speed,
+			p_health = p_health,
+			p_damage = p_damage
+		)
 		self.m_shape = "circle"
 		self.m_renderable = CircleRenderable(p_radius)
 		self.m_radius = p_radius
@@ -92,8 +97,14 @@ class CircleEntity(Entity):
 
 import math
 class RectangleEntity(Entity):
-	def __init__(self, p_position: Vec2, p_dimensions: Vec2, p_speed: float = 100.0, p_health: float = 100.0, p_damage: float = 0):
-		super().__init__(p_position, p_speed, p_health)
+	def __init__(self, p_position: Vec2, p_dimensions: Vec2, p_speed: float = 100.0, p_rotationSpeed: float = 0.5, p_health: float = 100.0, p_damage: float = 0):
+		super().__init__(
+			p_position = p_position,
+			p_speed = p_speed,
+			p_rotationSpeed= p_rotationSpeed,
+			p_health = p_health,
+			p_damage = p_damage
+		)
 		self.m_shape = "rectangle"
 		self.m_renderable = RectangleRenderable(p_dimensions)
 		self.m_dimensions = p_dimensions

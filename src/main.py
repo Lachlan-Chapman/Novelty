@@ -1,4 +1,6 @@
 import sys
+import math
+
 import pygame
 pygame.init() #immediatly initialize before ANY OTHER object creation
 from src.window import WINDOW
@@ -23,7 +25,10 @@ def main():
 			WINDOW.m_height // 2
 		),
 		p_dimensions = Vec2(18, 18),
-		p_speed = 360
+		p_speed = 0.0,
+		p_rotationSpeed = math.pi,
+		p_health = 500.0,
+		p_maxWeaponCount = 3
 	)
 
 	player.m_renderable.setColor((255, 255, 255))

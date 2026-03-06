@@ -1,8 +1,12 @@
 from src.vector import Vec2
 from src.time import TIME
-from src.entity import Entity
-class Weapon:
+from src.entity import Entity, RectangleEntity
+class Weapon(RectangleEntity):
 	def __init__(self, p_name: str = "Weapon", p_shootSpeed: float = 1.0,  p_magazineSize: int = 10.0, p_reloadSpeed: float = 3.0):
+		super().__init__(
+			p_position = Vec2(0.0, 0.0),
+			p_dimensions = Vec2(5.0, 10.0)
+		)
 		self.m_name = p_name
 
 		self.m_shootSpeed = p_shootSpeed
@@ -15,18 +19,18 @@ class Weapon:
 		self.m_reloadSpeed = p_reloadSpeed #how long to reload
 		self.m_finishedReloading = False
 		self.m_reloadFinishTime = 0.0
+		
+		self.m_collider.canCollide(False) #purely visual, for the time being no collision | entity registry has no concept of barrel, its on the player to render and handle
 
 	def reload(self):
 		self.m_reloadFinishTime = TIME.m_totalTime + self.m_reloadSpeed
 		self.m_bulletCount = self.m_magazineSize
-		print(f"Finish Reloading @ {self.m_reloadFinishTime}")
 
 	def shoot(self, p_shooter: Entity):
 		#make these local if no need to debug
 		self.m_finishedReloading = TIME.m_totalTime >= self.m_reloadFinishTime
 		self.m_finishedShooting = TIME.m_totalTime >= self.m_shootFinishTime
 		if self.m_finishedReloading and self.m_finishedShooting:
-			print(f"{p_shooter.__class__.__name__} Shoots")
 			self.m_shootFinishTime = TIME.m_totalTime + self.m_shootSpeed
 			self.m_bulletCount -= 1 #we shot so our magazine now drops
 

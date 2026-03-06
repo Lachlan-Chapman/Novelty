@@ -7,6 +7,12 @@ def clamp(p_value, p_min, p_max):
 
 from src.vector import Vec2
 class Collider:
+	def __init__(self):
+		self.m_canCollide = True
+
+	def canCollide(self, p_canCollide):
+		self.m_canCollide = p_canCollide #allows enabling/disabling collisions without causing null references
+
 	def collideCircleCirlce(self, p_a, p_b) -> bool: #for circle to circle comparison
 		delta = Vec2(
 			(p_a.m_position.x - p_b.m_position.x),
@@ -45,6 +51,8 @@ class Collider:
 		return True
 	
 	def overlaps(self, p_a, p_b):
+		if not self.m_canCollide:
+			return False
 		if p_a.m_shape == "circle" and p_b.m_shape == "circle":
 			#print("circle circle collide")
 			return self.collideCircleCirlce(p_a, p_b)

@@ -30,8 +30,7 @@ class Bullet(CircleEntity, Projectile):
 	def updatePosition(self):
 		self.m_position += self.m_direction * self.m_speed * TIME.m_deltaTime
 
-	def takeDamage(self, p_damage):
-		self.m_health -= 1 #treating health as collision count so bullets pass through m_health objects before dying
-
+	def damage(self, p_damage):
+		CircleEntity.damage(self, 1.0) #health is collision count so just strip away one collision
 
 	

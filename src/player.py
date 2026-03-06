@@ -1,7 +1,8 @@
 import pygame
+import math
 
 from src.vector import Vec2
-from src.entity import RectangleEntity
+from src.entity import CircleEntity, RectangleEntity
 from src.weapon import Weapon
 
 
@@ -9,56 +10,52 @@ from src.time import TIME
 from src.window import WINDOW
 
 class Player(RectangleEntity):
-	def __init__(self, p_position: Vec2, p_dimensions: Vec2, p_speed: float = 100, p_health: float = 1000.0, p_damage: float = 0, p_maxWeaponCount: int = 3):
+	def __init__(self, p_position: Vec2, p_dimensions: Vec2, p_speed: float = 100, p_rotationSpeed: float = 0.5, p_health: float = 1000.0, p_damage: float = 0, p_maxWeaponCount: int = 3):
 		super().__init__(
-			p_position,
-			p_dimensions,
-			p_speed,
-			p_health,
-			p_damage
+			p_position = p_position,
+			p_dimensions = p_dimensions,
+			p_speed = p_speed,
+			p_rotationSpeed = p_rotationSpeed,
+			p_health = p_health,
+			p_damage = p_damage
 		)
 		self.m_maxWeaponCount = p_maxWeaponCount
 		self.m_currentWeapon = 0
 		self.m_weapons = []
+		self.setRotation(math.tau * 0.75)
 	
 	def addWeapon(self, p_weapon: Weapon):
 		if len(self.m_weapons) < self.m_maxWeaponCount:
+			p_weapon.ownedBy(self) #this entity now controls the guns position and things for rendering
 			self.m_weapons.append(p_weapon)
 
+
 	def move(self, p_keys):
-		move = Vec2()
+		theta = 0.0
 		#get keyboard input directions
-		if p_keys[pygame.K_w]:
-			move.y -= 1.0
 		if p_keys[pygame.K_a]:
-			move.x -= 1.0
-		if p_keys[pygame.K_s]:
-			move.y += 1.0
+			theta -= self.m_rotationSpeed
 		if p_keys[pygame.K_d]:
-			move.x += 1.0
-		move *= self.m_speed * TIME.m_deltaTime
-		move_prime = self.m_position + move
-		if move_prime == self.m_position: #idk if float error will make this always false | but no movement shouldnt bother updating position and there on geometry
-			return
-		
-		#screen boundary check using center only cuz shape isnt decided to add ether half dimensions or radius
-		if move_prime.x < 0:
-			move_prime.x = 0
-		if move_prime.x > WINDOW.m_width:
-			move_prime.x = WINDOW.m_width
+			theta += self.m_rotationSpeed
+		theta *= TIME.m_deltaTime #adjust to be rotating speed per second
+		theta_prime = self.m_theta + theta
+		theta_prime = theta_prime % math.tau #wrap to be from [0, 2pi)
 
-		if move_prime.y < 0:
-			move_prime.y = 0
-		if move_prime.y > WINDOW.m_height:
-			move_prime.y = WINDOW.m_height
-		
-		self.setPosition(move_prime) #go via this interface so it updates geometry 
-
+		self.setRotation(theta_prime)
 	def shoot(self, p_keys):
 		if p_keys[pygame.K_SPACE]:
 			if len(self.m_weapons) > 0:
 				self.m_weapons[self.m_currentWeapon].shoot(self) #creates bullet from this position
 
+
+	def draw(self):
+		super().draw() #draw player as normal
+		#based on theta and position and size set the barrel location
+		if len(self.m_weapons) > 0:
+			weapon = self.m_weapons[self.m_currentWeapon]
+			weapon.setPosition(self.m_position + self.getDirection() * self.m_dimensions.y) #creates bullet from this position
+			weapon.setRotation(self.m_theta)
+			weapon.draw()
 
 
 
