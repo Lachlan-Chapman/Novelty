@@ -18,6 +18,10 @@ class EntityRegistry:
 		else:
 			print("entityRegistry.add() was given not Entity type")
 
+	def update(self): #asks all entities to update themseleves for PURELY internal data if they have such logic
+		for entity in self.m_entities:
+			entity.updatePosition()
+
 	def handleCollision(self):
 		for entity in self.m_entities:
 			entity.m_collisionCount = 0 #reset collision at the start of each frame
@@ -32,6 +36,9 @@ class EntityRegistry:
 				if not a.m_alive or not b.m_alive: #possible for an entity to be dead mid frame but not yet cleared
 					continue
 
+				if a.m_owner is b or b.m_owner is a:
+					continue #friendly collision means they are transparent to one another and allowed to collide
+
 				if a.collideWith(b): #stage just to see if the objects touch
 					pair = (a.m_identity, b.m_identity) #since our loop is already from start of list to latest the ID at the end of the registry is always greater than the previous | dont need sorting
 					#pair = tuple(sorted(a.m_identity, b.m_identity)) #using sorting and the set non duplicate method
@@ -40,7 +47,6 @@ class EntityRegistry:
 					b.m_collisionCount += 1
 					
 					if pair not in self.m_previousCollisions:
-
 						a.onCollisionEnter(b)
 						b.onCollisionEnter(a)
 		self.m_previousCollisions = self.m_currentCollisions.copy()

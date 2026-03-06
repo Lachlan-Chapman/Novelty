@@ -3,13 +3,18 @@ import pygame
 pygame.init() #immediatly initialize before ANY OTHER object creation
 from src.window import WINDOW
 
+from src.entityRegistry import ENTITY_REGISTRY #the instance of the registry not the class
+from src.time import TIME
+
 from src.vector import Vec2
 from src.entity import RectangleEntity, CircleEntity
+
+from src.weapon import Pistol
+from src.bullet import Bullet
+
 from src.player import Player
 from src.enemy import CircleEnemy
 
-from src.entityRegistry import ENTITY_REGISTRY #the instance of the registry not the class
-from src.time import TIME
 
 def main():
 	player = Player(
@@ -22,12 +27,13 @@ def main():
 	)
 
 	player.m_renderable.setColor((255, 255, 255))
+	player.addWeapon(Pistol(Bullet))
 	ENTITY_REGISTRY.add(player)
 
 	rect = RectangleEntity(
 		p_position = Vec2(
-			WINDOW.m_width // 4,
-			WINDOW.m_height // 4
+			WINDOW.m_width // 2,
+			WINDOW.m_height // 1.75
 		),
 		p_dimensions = Vec2(20, 30)
 	)
@@ -56,6 +62,7 @@ def main():
 		keys = pygame.key.get_pressed()
 		
 		#Entity Actions
+		ENTITY_REGISTRY.update()
 		player.shoot(keys)
 
 		#Update Entity Positions
@@ -98,7 +105,6 @@ if __name__ == "__main__":
 	#get closest point in/on rect to the circle (the closest point can be in the rect not just on the edge)
 	#get distance from closest point to circle
 	#check if the distance to the circle from the closest point is < radius which would mean collision
-#bullet object - DONE
 #gobal list of all entities - DONE
 	#sweep to draw, update pos etc
 	#naive (o^2) check for collison
@@ -106,7 +112,8 @@ if __name__ == "__main__":
 #gobal time - DONE
 #global window - DONE
 #engine level damage gating - DONE
-#shooting
+#bullet object - DONE
+#shooting - DONE
 #player rotation with shooting
 #enemy and bullet collision
 #enemy death

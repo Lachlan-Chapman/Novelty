@@ -8,16 +8,20 @@ class Entity:
 	def __init__(self, p_position: Vec2, p_speed: float = 100, p_health: float = 1000.0, p_damage: float = 0):
 		self.m_collider = Collider()
 		self.m_position = p_position
-		self.m_speed = p_speed
-		self.m_health = p_health
-		self.m_damage = p_damage
-		self.m_alive = True
-		self.m_shape = "base"
+		self.m_direction = Vec2()
+		self.m_dirty_geometry = True #immediate update when called upon
+
+		self.m_owner = None #allows for friendly fire control | allows for bullets to not kill the shooter
+		self.m_collisionCount = 0 #how many objects it colliding with at a given frame
 		self.m_identity = None #used for collision pairing, ENTITY_REGISTRY sets this so only enetiies registerd will be apart of the actaul game
 
-		self.m_collisionCount = 0 #how many objects it colliding with at a given frame
-
-		self.m_dirty_geometry = True #immediate update when called upon
+		self.m_damage = p_damage
+		self.m_speed = p_speed
+		
+		self.m_health = p_health
+		self.m_alive = True
+		
+		self.m_shape = "base"
 
 	def setRotation(self, p_theta: float): #rotation in radians NEED TO CONVERT TO DEG if for some reason something requires it (pygame renderer)
 		self.m_theta = p_theta
@@ -30,6 +34,9 @@ class Entity:
 	def setPosition(self, p_position: Vec2): #sets exact position in screen coordinates
 		self.m_position = p_position
 		self.m_dirty_geometry = True
+
+	def updatePosition(self): #for if the entity has its own internal position handling IE AI or a projectile
+		pass
 
 	def offsetPosition(self, p_delta: Vec2): #doesnt set but adds the direction
 		self.m_position += p_delta
@@ -56,6 +63,17 @@ class Entity:
 	def onCollisionEnter(self, p_other: "Entity"): #allows for custom handling on how to act with differnet entity collision combos IE bullet with ship and ship with bullet etc
 		if isinstance(p_other, Entity):
 			p_other.applyDamage(self.m_damage) #default enemies that run into one another just hurt each other
+
+	def getDirection(self):
+		self.m_direction = Vec2(
+			math.cos(self.m_theta),
+			math.sin(self.m_theta)
+		)
+		return self.m_direction
+	
+	def ownedBy(self, p_other: "Entity"):
+		if isinstance(p_other, Entity):
+			self.m_owner = p_other #register the owner
 
 	def draw(self):
 		raise NotImplementedError
