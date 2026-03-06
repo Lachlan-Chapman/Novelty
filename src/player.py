@@ -56,7 +56,6 @@ class Player(RectangleEntity):
 
 	def shoot(self, p_keys):
 		if p_keys[pygame.K_SPACE]:
-			print("player shoots")
 			if len(self.m_weapons) > 0:
 				self.m_weapons[self.m_currentWeapon].shoot(self) #creates bullet from this position
 

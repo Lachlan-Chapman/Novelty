@@ -15,7 +15,7 @@ class Bullet(CircleEntity, Projectile):
 			self,
 			p_position = p_startPosition,
 			p_radius = 10,
-			p_speed = 25,
+			p_speed = 50,
 			p_health = 1,
 			p_damage = 100.0
 		)

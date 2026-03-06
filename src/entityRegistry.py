@@ -53,8 +53,6 @@ class EntityRegistry:
 
 		for entity in self.m_entities: #for debugging
 			entity.drawCollision()
-
-
 	
 	def removeDead(self):
 		#slower than looping but for now its the easiest option | for small entity count such is this game, its fine

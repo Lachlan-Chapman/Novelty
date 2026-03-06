@@ -45,24 +45,20 @@ class Entity:
 	def collideWith(self, p_other):
 		return self.m_collider.overlaps(self, p_other)
 	
-	def takeDamage(self, p_damage):
+	def damage(self, p_damage: float):
 		self.m_health -= p_damage
 		if self.m_health <= 0:
 			self.m_alive = False
-	
-	def applyDamage(self, p_other):
-		if isinstance(p_other, Entity):
-			p_other.applyDamage(self.m_damage)
+		print(f"Took {p_damage} Damage | Health: {self.m_health}")
 
-	def drawCollision(self):
-		if self.m_collisionCount > 0:
-			self.m_renderable.setColor((0, 255, 0))
-		else:
-			self.m_renderable.setColor((255, 0, 0))
+	def heal(self, p_health: float):
+		self.m_health += p_health
+		if self.m_health > 0:
+			self.m_alive = True
 
 	def onCollisionEnter(self, p_other: "Entity"): #allows for custom handling on how to act with differnet entity collision combos IE bullet with ship and ship with bullet etc
 		if isinstance(p_other, Entity):
-			p_other.applyDamage(self.m_damage) #default enemies that run into one another just hurt each other
+			p_other.damage(self.m_damage) #default enemies that run into one another just hurt each other
 
 	def getDirection(self):
 		self.m_direction = Vec2(
@@ -75,12 +71,18 @@ class Entity:
 		if isinstance(p_other, Entity):
 			self.m_owner = p_other #register the owner
 
+	def drawCollision(self):
+		if self.m_collisionCount > 0:
+			self.m_renderable.setColor((0, 255, 0))
+		else:
+			self.m_renderable.setColor((255, 0, 0))
+
 	def draw(self):
 		raise NotImplementedError
 	
 class CircleEntity(Entity):
 	def __init__(self, p_position: Vec2, p_radius: float, p_speed: float = 100.0, p_health: float = 100.0, p_damage: float = 0):
-		super().__init__(p_position, p_speed, p_health)
+		super().__init__(p_position, p_speed, p_health, p_damage)
 		self.m_shape = "circle"
 		self.m_renderable = CircleRenderable(p_radius)
 		self.m_radius = p_radius
