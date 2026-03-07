@@ -14,7 +14,7 @@ class Bullet(CircleEntity, Projectile):
 		CircleEntity.__init__(
 			self,
 			p_position = p_startPosition,
-			p_radius = 10,
+			p_radius = 5,
 			p_speed = 50,
 			p_health = 1,
 			p_damage = 100.0

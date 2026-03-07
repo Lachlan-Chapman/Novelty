@@ -20,7 +20,7 @@ class EntityRegistry:
 
 	def update(self): #asks all entities to update themseleves for PURELY internal data if they have such logic
 		for entity in self.m_entities:
-			entity.updatePosition()
+			entity.update()
 
 	def handleCollision(self):
 		for entity in self.m_entities:

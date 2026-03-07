@@ -35,21 +35,12 @@ def main():
 	player.addWeapon(Pistol(Bullet))
 	ENTITY_REGISTRY.add(player)
 
-	rect = RectangleEntity(
-		p_position = Vec2(
-			WINDOW.m_width // 2,
-			WINDOW.m_height // 1.75
-		),
-		p_dimensions = Vec2(20, 30)
-	)
-	ENTITY_REGISTRY.add(rect)
-
-	circ = CircleEntity(
+	circ = CircleEnemy(
+		player,
 		p_position = Vec2(
 			WINDOW.m_width // 3,
 			WINDOW.m_height // 3
-		),
-		p_radius = 15
+		)
 	)
 	ENTITY_REGISTRY.add(circ)
 

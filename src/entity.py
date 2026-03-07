@@ -26,22 +26,28 @@ class Entity:
 
 	def setRotation(self, p_theta: float): #rotation in radians NEED TO CONVERT TO DEG if for some reason something requires it (pygame renderer)
 		self.m_theta = p_theta
+		self.m_theta = self.m_theta % math.tau
 		self.m_dirty_geometry = True
 
 	def offsetRotation(self, p_delta: float): #doesnt set but adds the delta rotation
-		self.m_theta += p_delta
-		self.m_dirty_geometry = True
+		self.setRotation(self.m_theta + p_delta)
+
+	def updateRotation(self):
+		pass
 
 	def setPosition(self, p_position: Vec2): #sets exact position in screen coordinates
 		self.m_position = p_position
 		self.m_dirty_geometry = True
 
+	def offsetPosition(self, p_delta: Vec2): #doesnt set but adds the direction
+		self.setPosition(self.m_position + p_delta)
+
 	def updatePosition(self): #for if the entity has its own internal position handling IE AI or a projectile
 		pass
 
-	def offsetPosition(self, p_delta: Vec2): #doesnt set but adds the direction
-		self.m_position += p_delta
-		self.m_dirty_geometry = True
+	def update(self):
+		self.updatePosition()
+		self.updateRotation()
 
 	def collideWith(self, p_other):
 		return self.m_collider.overlaps(self, p_other)
