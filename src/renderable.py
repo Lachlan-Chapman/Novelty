@@ -13,7 +13,7 @@ class Renderable:
 
 class CircleRenderable(Renderable):
 	def __init__(self, p_radius: float):
-		super().__init__()
+		Renderable.__init__(self = self)
 		self.m_radius = p_radius
 
 	def draw(self, p_screen, p_position: Vec2):
@@ -27,7 +27,7 @@ class CircleRenderable(Renderable):
 import math
 class RectangleRenderable(Renderable):
 	def __init__(self, p_dimensions: Vec2):
-		super().__init__()
+		Renderable.__init__(self = self)
 		self.m_dimensions = p_dimensions
 
 	def draw(self, p_screen, p_position: Vec2, p_theta: float):

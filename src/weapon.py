@@ -4,7 +4,8 @@ from src.entity import Entity, RectangleEntity
 from src.bullet import Projectile, Bullet
 class Weapon(RectangleEntity):
 	def __init__(self, p_name: str = "Weapon", p_projectile: Projectile = Bullet, p_shootSpeed: float = 1.0,  p_magazineSize: int = 10.0, p_reloadSpeed: float = 3.0):
-		super().__init__(
+		RectangleEntity.__init__(
+			self = self,
 			p_position = Vec2(0.0, 0.0),
 			p_dimensions = Vec2(5.0, 10.0)
 		)
@@ -59,7 +60,8 @@ from src.entityRegistry import ENTITY_REGISTRY
 
 class Pistol(Weapon): #default config for pistol
 	def __init__(self):
-		super().__init__(
+		Weapon.__init__(
+			self = self,
 			p_name = "Pistol",
 			p_projectile = Bullet,
 			p_shootSpeed = 1,

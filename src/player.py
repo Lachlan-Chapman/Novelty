@@ -11,7 +11,8 @@ from src.window import WINDOW
 
 class Player(RectangleEntity):
 	def __init__(self, p_position: Vec2, p_dimensions: Vec2, p_speed: float = 100, p_rotationSpeed: float = 0.5, p_health: float = 1000.0, p_damage: float = 0, p_maxWeaponCount: int = 3):
-		super().__init__(
+		RectangleEntity.__init__(
+			self = self,
 			p_position = p_position,
 			p_dimensions = p_dimensions,
 			p_speed = p_speed,
@@ -49,7 +50,7 @@ class Player(RectangleEntity):
 
 
 	def draw(self):
-		super().draw() #draw player as normal
+		RectangleEntity.draw(self = self) #draw player as normal
 		#based on theta and position and size set the barrel location
 		if len(self.m_weapons) > 0:
 			weapon = self.m_weapons[self.m_currentWeapon]

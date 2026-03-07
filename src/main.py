@@ -16,6 +16,7 @@ from src.bullet import Bullet
 
 from src.player import Player
 from src.enemy import CircleEnemy
+from src.enemySpawner import EnemySpawner
 
 
 def main():
@@ -35,22 +36,12 @@ def main():
 	player.addWeapon(Pistol())
 	ENTITY_REGISTRY.add(player)
 
-	enemy = CircleEnemy(
-		player,
-		p_position = Vec2(
-			WINDOW.m_width // 3,
-			WINDOW.m_height // 3
-		)
+	enemy_spawner = EnemySpawner(
+		p_target = player,
+		p_spawnSpeed = 5,
+		p_spawnRadius = 300
 	)
-	enemy_weapon = Weapon(
-		"Enemy Turret",
-		p_shootSpeed = 1,
-		p_magazineSize = 5,
-		p_reloadSpeed = 0 #once out of ammo thats it defined by the shoot function
-	)
-	enemy.addWeapon(enemy_weapon)
 
-	ENTITY_REGISTRY.add(enemy)
 
 	running = True
 	while running:
@@ -66,6 +57,7 @@ def main():
 		keys = pygame.key.get_pressed()
 		
 		#Entity Actions
+		enemy_spawner.spawnEnemy()
 		ENTITY_REGISTRY.update()
 		player.shoot(keys)
 

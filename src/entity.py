@@ -88,7 +88,8 @@ class Entity:
 	
 class CircleEntity(Entity):
 	def __init__(self, p_position: Vec2, p_radius: float, p_speed: float = 100.0, p_rotationSpeed: float = 10, p_health: float = 100.0, p_damage: float = 0):
-		super().__init__(
+		Entity.__init__(
+			self = self,
 			p_position = p_position,
 			p_speed = p_speed,
 			p_health = p_health,
@@ -104,7 +105,8 @@ class CircleEntity(Entity):
 import math
 class RectangleEntity(Entity):
 	def __init__(self, p_position: Vec2, p_dimensions: Vec2, p_speed: float = 100.0, p_rotationSpeed: float = 0.5, p_health: float = 100.0, p_damage: float = 0):
-		super().__init__(
+		Entity.__init__(
+			self = self,
 			p_position = p_position,
 			p_speed = p_speed,
 			p_rotationSpeed= p_rotationSpeed,

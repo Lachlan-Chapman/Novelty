@@ -4,7 +4,7 @@ from src.vector import Vec2
 from src.entity import Entity, CircleEntity
 from src.weapon import Weapon
 from src.time import TIME
-class Enemy:
+class Enemy(Entity):
 	def __init__(self, p_target: Entity):
 		self.m_target = p_target
 	
@@ -47,7 +47,7 @@ class CircleEnemy(CircleEntity, Enemy):
 		self.setRotation(theta)
 
 	def update(self):
-		super().update()
+		CircleEntity.update(self = self)
 		self.shoot()
 	
 	

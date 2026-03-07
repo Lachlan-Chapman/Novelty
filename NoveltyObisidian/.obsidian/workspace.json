@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "00_CORE/Core Game Loop.md",
+                "file": "06_STATION/BOTS/Platinum Dome Bot.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Core Game Loop"
+              "title": "Platinum Dome Bot"
             }
           }
         ]
@@ -185,6 +185,8 @@
   },
   "active": "64f4ff6073415c4a",
   "lastOpenFiles": [
+    "00_CORE/Core Game Loop.md",
+    "06_STATION/BOTS/Platinum Dome Bot.md",
     "06_STATION/BOTS/Attacker Bot.md",
     "06_STATION/BOTS/Repairer Bot.md",
     "06_STATION/BOTS/Collector Bot.md",
@@ -209,8 +211,6 @@
     "04_FACTORY/ENERGY/Processor.md",
     "06_STATION/WEAPONS/Grabber.md",
     "06_STATION/WEAPONS/Shotgun.md",
-    "06_STATION/WEAPONS/Rocket Launcher.md",
-    "06_STATION/WEAPONS/Pistol.md",
     "04_FACTORY/PRODUCTION/Ammo",
     "01_SOLAR_SYSTEM/Planets",
     "01_SOLAR_SYSTEM/PLANETS",
