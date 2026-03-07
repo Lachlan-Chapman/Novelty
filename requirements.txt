@@ -1,1 +1,4 @@
+graphviz==0.21
+pydeps==3.0.2
 pygame-ce==2.5.6
+stdlib-list==0.12.0
