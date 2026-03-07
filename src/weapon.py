@@ -18,13 +18,14 @@ class Weapon(RectangleEntity):
 		self.m_shootFinishTime = 0.0
 
 		self.m_magazineSize = p_magazineSize
-		self.m_bulletCount = p_magazineSize
+		self.m_bulletCount = 0
 
 		self.m_reloadSpeed = p_reloadSpeed #how long to reload
 		self.m_finishedReloading = False
 		self.m_reloadFinishTime = 0.0
 		
 		self.m_collider.canCollide(False) #purely visual, for the time being no collision | entity registry has no concept of barrel, its on the player to render and handle
+		self.reload()
 
 	#in case custom weapons need to created on the fly
 	def configure(self, p_name: str, p_shootSpeed: float, p_magazineSize: int, p_reloadSpeed):
@@ -53,6 +54,7 @@ class Weapon(RectangleEntity):
 			ENTITY_REGISTRY.add(projectile)
 		if self.m_bulletCount <= 0:
 			self.reload()
+		
 
 from src.entity import Entity
 from src.bullet import Projectile, Bullet

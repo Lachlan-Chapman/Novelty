@@ -16,6 +16,7 @@ class EnemySpawner:
 		self.m_finishSpawn = False
 		self.m_spawnFinishTime = 0.0
 
+		self.m_enemySpeed = 20.0
 	def spawn(self):
 		
 		if self.m_finishSpawn:
@@ -42,23 +43,29 @@ class EnemySpawner:
 		self.m_finishSpawn = TIME.m_totalTime >= self.m_spawnFinishTime
 		if self.m_finishSpawn:
 			random_theta = random.random() * math.tau
-			spawn_location = Vec2(
+			spawn_location = self.m_target.m_position + Vec2(
 				math.cos(random_theta),
 				math.sin(random_theta)
 			) * self.m_spawnRadius
 
+			
+			self.m_spawnSpeed *= 0.95 #decrease exponentially since it self referential
+			if self.m_spawnSpeed < 0.25:
+				self.m_spawnSpeed = 0.25
 			enemy = CircleEnemy(
 				p_target = self.m_target,
-				p_position = spawn_location
+				p_position = spawn_location,
+				p_speed = self.m_enemySpeed
 			)
+			self.m_enemySpeed *= 1.0085
 
 
 			enemy.addWeapon(Weapon(
 				p_name = "Enemy Turret",
 				p_projectile = Bullet,
-				p_shootSpeed = 5,
-				p_magazineSize = 5,
-				p_reloadSpeed = 0, #doesnt reaload has no extra magazine
+				p_shootSpeed = 0,
+				p_magazineSize = 0, #no shooting capabilities rn
+				p_reloadSpeed = 5
 			))
 			ENTITY_REGISTRY.add(enemy)
 

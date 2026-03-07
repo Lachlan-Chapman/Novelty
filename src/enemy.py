@@ -36,9 +36,9 @@ class CircleEnemy(CircleEntity, Enemy):
 		self.m_weapon = None
 
 	def updatePosition(self): #moves toward target
-		target_position = self.m_target.m_position.normalise()
+		delta_pos = (self.m_target.m_position - self.m_position).normalise()
 		self.offsetPosition(
-			target_position * self.m_speed * TIME.m_deltaTime
+			delta_pos * self.m_speed * TIME.m_deltaTime
 		)
 	
 	def updateRotation(self): #looks at target

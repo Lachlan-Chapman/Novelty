@@ -2,9 +2,8 @@ import pygame
 import math
 
 from src.vector import Vec2
-from src.entity import CircleEntity, RectangleEntity
+from src.entity import RectangleEntity
 from src.weapon import Weapon
-
 
 from src.time import TIME
 from src.window import WINDOW
@@ -24,6 +23,11 @@ class Player(RectangleEntity):
 		self.m_currentWeapon = 0
 		self.m_weapons = []
 		self.setRotation(math.tau * 0.75)
+
+	def damage(self, p_damage):
+		RectangleEntity.damage(self = self, p_damage = p_damage)
+		if self.m_health <= 0:
+			print(f"You Lasted: {TIME.m_totalTime}s")
 	
 	def addWeapon(self, p_weapon: Weapon):
 		if len(self.m_weapons) < self.m_maxWeaponCount:

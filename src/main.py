@@ -25,21 +25,28 @@ def main():
 			WINDOW.m_width // 2,
 			WINDOW.m_height // 2
 		),
-		p_dimensions = Vec2(18, 18),
+		p_dimensions = Vec2(25, 25),
 		p_speed = 0.0,
-		p_rotationSpeed = math.pi,
+		p_rotationSpeed = math.pi * 1.5,
 		p_health = 500.0,
+		p_damage = 100.0,
 		p_maxWeaponCount = 3
 	)
 
 	player.m_renderable.setColor((255, 255, 255))
-	player.addWeapon(Pistol())
+	player.addWeapon(Weapon(
+		p_name = "Turret",
+		p_projectile = Bullet,
+		p_shootSpeed = 0.2,
+		p_magazineSize = 1,
+		p_reloadSpeed = 0
+	))
 	ENTITY_REGISTRY.add(player)
 
 	enemy_spawner = EnemySpawner(
 		p_target = player,
-		p_spawnSpeed = 5,
-		p_spawnRadius = 300
+		p_spawnSpeed = 1.8,
+		p_spawnRadius = 250
 	)
 
 
