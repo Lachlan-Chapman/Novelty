@@ -11,7 +11,7 @@ from src.time import TIME
 from src.vector import Vec2
 from src.entity import RectangleEntity, CircleEntity
 
-from src.weapon import Pistol
+from src.weapon import Weapon, Pistol
 from src.bullet import Bullet
 
 from src.player import Player
@@ -32,17 +32,25 @@ def main():
 	)
 
 	player.m_renderable.setColor((255, 255, 255))
-	player.addWeapon(Pistol(Bullet))
+	player.addWeapon(Pistol())
 	ENTITY_REGISTRY.add(player)
 
-	circ = CircleEnemy(
+	enemy = CircleEnemy(
 		player,
 		p_position = Vec2(
 			WINDOW.m_width // 3,
 			WINDOW.m_height // 3
 		)
 	)
-	ENTITY_REGISTRY.add(circ)
+	enemy_weapon = Weapon(
+		"Enemy Turret",
+		p_shootSpeed = 1,
+		p_magazineSize = 5,
+		p_reloadSpeed = 0 #once out of ammo thats it defined by the shoot function
+	)
+	enemy.addWeapon(enemy_weapon)
+
+	ENTITY_REGISTRY.add(enemy)
 
 	running = True
 	while running:

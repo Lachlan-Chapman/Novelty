@@ -45,6 +45,11 @@ class CircleEnemy(CircleEntity, Enemy):
 		direction = self.m_target.m_position - self.m_position
 		theta = math.atan2(direction.y, direction.x)
 		self.setRotation(theta)
+
+	def update(self):
+		super().update()
+		self.shoot()
+	
 	
 	def addWeapon(self, p_weapon: Weapon):
 		p_weapon.ownedBy(self)

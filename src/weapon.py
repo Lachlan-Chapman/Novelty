@@ -1,13 +1,16 @@
 from src.vector import Vec2
 from src.time import TIME
 from src.entity import Entity, RectangleEntity
+from src.bullet import Projectile, Bullet
 class Weapon(RectangleEntity):
-	def __init__(self, p_name: str = "Weapon", p_shootSpeed: float = 1.0,  p_magazineSize: int = 10.0, p_reloadSpeed: float = 3.0):
+	def __init__(self, p_name: str = "Weapon", p_projectile: Projectile = Bullet, p_shootSpeed: float = 1.0,  p_magazineSize: int = 10.0, p_reloadSpeed: float = 3.0):
 		super().__init__(
 			p_position = Vec2(0.0, 0.0),
 			p_dimensions = Vec2(5.0, 10.0)
 		)
 		self.m_name = p_name
+
+		self.m_projectile = p_projectile
 
 		self.m_shootSpeed = p_shootSpeed
 		self.m_finishedShooting = False
@@ -22,6 +25,12 @@ class Weapon(RectangleEntity):
 		
 		self.m_collider.canCollide(False) #purely visual, for the time being no collision | entity registry has no concept of barrel, its on the player to render and handle
 
+	#in case custom weapons need to created on the fly
+	def configure(self, p_name: str, p_shootSpeed: float, p_magazineSize: int, p_reloadSpeed):
+		self.m_name = p_name
+		self.m_shootSpeed = p_shootSpeed
+		self.m_magazineSize = p_magazineSize
+		self.m_reloadSpeed = p_reloadSpeed
 	def reload(self):
 		self.m_reloadFinishTime = TIME.m_totalTime + self.m_reloadSpeed
 		self.m_bulletCount = self.m_magazineSize
@@ -48,15 +57,15 @@ from src.entity import Entity
 from src.bullet import Projectile, Bullet
 from src.entityRegistry import ENTITY_REGISTRY
 
-class Pistol(Weapon):
-	def __init__(self, p_projectile: Projectile):
+class Pistol(Weapon): #default config for pistol
+	def __init__(self):
 		super().__init__(
-			"Pistol",
+			p_name = "Pistol",
+			p_projectile = Bullet,
 			p_shootSpeed = 1,
 			p_magazineSize = 2,
 			p_reloadSpeed = 3
 		)
-		self.m_projectile = p_projectile
 	
 	
 			
