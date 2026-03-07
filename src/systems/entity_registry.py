@@ -1,4 +1,4 @@
-from src.entity import Entity
+from entities.entity import Entity
 class EntityRegistry:
 	def __init__(self):
 		self.m_entityCount = 0 #makes it easier so i can avoid calling len(self.m_entites) every time i wanna quickly query it, also i think better readability

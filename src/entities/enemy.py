@@ -1,9 +1,9 @@
 
 import math
-from src.vector import Vec2
-from src.entity import Entity, CircleEntity
-from src.weapon import Weapon
-from src.time import TIME
+from core.vector import Vec2
+from entities.entity import Entity, CircleEntity
+from gameplay.weapon import Weapon
+from core.time import TIME
 class Enemy(Entity):
 	def __init__(self, p_target: Entity):
 		self.m_target = p_target

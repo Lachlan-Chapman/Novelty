@@ -1,0 +1,2 @@
+Composition being a great way to build a complex object made up of more atomic ingredients that themselves are self contained. Especially when the atomic is unlike its owner, makes it extremely useful to have as a member
+IE the [[Player]] owns [[Shotgun]] 

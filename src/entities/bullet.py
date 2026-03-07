@@ -1,7 +1,7 @@
-from src.vector import Vec2
-from src.entity import Entity, CircleEntity
-from src.time import TIME
-from src.window import WINDOW
+from core.vector import Vec2
+from entities.entity import Entity, CircleEntity
+from core.time import TIME
+from core.window import WINDOW
 class Projectile:
 	def __init__(self, p_type: str = "base"):
 		self.m_type = p_type

@@ -1,14 +1,16 @@
 {
   "version": "0.2.0",
   "configurations": [
-    {
-      "name": "Run (module) src.main",
-      "type": "debugpy",
-      "request": "launch",
-      "module": "src.main",
-      "console": "integratedTerminal",
-      "cwd": "${workspaceFolder}",
-      "justMyCode": true
-    }
+	{
+		"name": "Run main.py",
+		"type": "debugpy",
+		"request": "launch",
+		"program": "${workspaceFolder}/src/main.py",
+		"cwd": "${workspaceFolder}",
+		"console": "integratedTerminal",
+		"env": {
+			"PYTHONPATH": "${workspaceFolder}/src"
+		}
+	}
   ]
 }

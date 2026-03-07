@@ -1,14 +1,10 @@
-def clamp(p_value, p_min, p_max):
-	if p_value < p_min:
-		return p_min
-	if p_value > p_max:
-		return p_max
-	return p_value
+from core.vector import Vec2
+from core.utils import clamp
 
-from src.vector import Vec2
 class Collider:
 	def __init__(self):
 		self.m_canCollide = True
+		self.m_collisionCount = 0
 
 	def canCollide(self, p_canCollide):
 		self.m_canCollide = p_canCollide #allows enabling/disabling collisions without causing null references

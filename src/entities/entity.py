@@ -1,128 +1,153 @@
 import pygame
-from src.vector import Vec2
+import math
 
-from src.collision import Collider
-from src.renderable import CircleRenderable, RectangleRenderable
-from src.window import WINDOW
+from core.window import WINDOW
+from core.console import CONSOLE
+from core.vector import Vec2
+
+from physics.collision import Collider
+from render.renderable import Renderable, CircleRenderable, RectangleRenderable
+
 class Entity:
-	def __init__(self, p_position: Vec2 = Vec2(0.0), p_speed: float = 100, p_rotationSpeed: float = 0.5, p_health: float = 1000.0, p_damage: float = 0):
-		self.m_collider = Collider()
-		self.m_position = p_position
-		self.m_direction = Vec2()
-		self.m_dirty_geometry = True #immediate update when called upon
-
-		self.m_owner = None #allows for friendly fire control | allows for bullets to not kill the shooter
-		self.m_collisionCount = 0 #how many objects it colliding with at a given frame
-		self.m_identity = None #used for collision pairing, ENTITY_REGISTRY sets this so only enetiies registerd will be apart of the actaul game
-
-		self.m_damage = p_damage
-		self.m_speed = p_speed
-		self.m_rotationSpeed = p_rotationSpeed
+	def __init__(
+		self,
+		p_position: Vec2,
+		p_rotation: float
+	):
+		self._position: Vec2 = p_position
+		self._rotation: float = p_rotation
 		
-		self.m_health = p_health
-		self.m_alive = True
-		
-		self.m_shape = "base"
+		self._id: int | None = None #used for collision pairing, ENTITY_REGISTRY sets this so only enetiies registerd will be apart of the actaul game
 
-	def setRotation(self, p_theta: float): #rotation in radians NEED TO CONVERT TO DEG if for some reason something requires it (pygame renderer)
-		self.m_theta = p_theta
-		self.m_theta = self.m_theta % math.tau
-		self.m_dirty_geometry = True
+		self._collider: Collider | None = None
+		self._renderable: Renderable | None = None
+		self._dirtyGeometry = True
 
-	def offsetRotation(self, p_delta: float): #doesnt set but adds the delta rotation
-		self.setRotation(self.m_theta + p_delta)
+	def _set_id(self, p_id: int) -> None:
+		if self._id is not None:
+			CONSOLE.warn("Entity ID already set")
+			return
+		self._id = p_id
 
-	def updateRotation(self):
+	#ROTATION SETTERS
+	def setRotation(self, p_theta: float) -> None: #rotation in radians NEED TO CONVERT TO DEG if for some reason something requires it (pygame renderer)
+		self._rotation = p_theta
+		self._rotation = self._rotation % math.tau
+		self._dirtyGeometry = True
+
+	def offsetRotation(self, p_delta: float) -> None: #doesnt set but adds the delta rotation
+		self.setRotation(self._rotation + p_delta)
+
+	#POSITION SETTERS
+	def setPosition(self, p_position: Vec2) -> None: #sets exact position in screen coordinates
+		self._position = p_position
+		self._dirtyGeometry = True
+
+	def offsetPosition(self, p_delta: Vec2) -> None: #doesnt set but adds the direction
+		self.setPosition(self._position + p_delta)
+
+	#INTERNAL UPDATES
+	def updateRotation(self) -> None: #for internally handled changes for AI or some function
 		pass
 
-	def setPosition(self, p_position: Vec2): #sets exact position in screen coordinates
-		self.m_position = p_position
-		self.m_dirty_geometry = True
-
-	def offsetPosition(self, p_delta: Vec2): #doesnt set but adds the direction
-		self.setPosition(self.m_position + p_delta)
-
-	def updatePosition(self): #for if the entity has its own internal position handling IE AI or a projectile
+	def updatePosition(self) -> None: #for if the entity has its own internal position handling IE AI or a projectile
 		pass
 
-	def update(self):
+	def update(self) -> None:
 		self.updatePosition()
 		self.updateRotation()
 
-	def collideWith(self, p_other):
-		return self.m_collider.overlaps(self, p_other)
+	#COLLISIONS
+	def overlaps(self, p_other: "Entity") -> bool:
+		if self._collider is None:
+			CONSOLE.error("Entity collider not set")
+			return False
+		if p_other._collider is None:
+			CONSOLE.error("Other entity collider not set")
+			return False
+		return self._collider.overlaps(p_other._collider)
 	
-	def damage(self, p_damage: float):
-		self.m_health -= p_damage
-		if self.m_health <= 0:
-			self.m_alive = False
+	def onCollisionEnter(self, p_other: "Entity") -> None: #allows for custom handling on how to act with differnet entity collision combos IE bullet with ship and ship with bullet etc
+		pass
 
-	def heal(self, p_health: float):
-		self.m_health += p_health
-		if self.m_health > 0:
-			self.m_alive = True
+	#RENDERING
+	def draw(self) -> None:
+		if self._renderable is not None:
+			self._renderable.draw(self._position, self._rotation)
 
-	def onCollisionEnter(self, p_other: "Entity"): #allows for custom handling on how to act with differnet entity collision combos IE bullet with ship and ship with bullet etc
-		if isinstance(p_other, Entity):
-			p_other.damage(self.m_damage) #default enemies that run into one another just hurt each other
-
-	def getDirection(self):
-		self.m_direction = Vec2(
-			math.cos(self.m_theta),
-			math.sin(self.m_theta)
-		)
-		return self.m_direction
+	#GETTERS
+	@property
+	def position(self) -> Vec2:
+		return self._position
 	
-	def ownedBy(self, p_other: "Entity"):
-		if isinstance(p_other, Entity):
-			self.m_owner = p_other #register the owner
-
-	def drawCollision(self):
-		if self.m_collisionCount > 0:
-			self.m_renderable.setColor((0, 255, 0))
-		else:
-			self.m_renderable.setColor((255, 0, 0))
-
-	def draw(self):
-		raise NotImplementedError
+	@property
+	def rotation(self) -> float:
+		return self._rotation
 	
-class CircleEntity(Entity):
-	def __init__(self, p_position: Vec2, p_radius: float, p_speed: float = 100.0, p_rotationSpeed: float = 10, p_health: float = 100.0, p_damage: float = 0):
+	@property
+	def id(self) -> int | None:
+		return self._id
+
+	#DEBUGGING
+	def drawCollision(self) -> None:
+		if self._collider is not None and self._renderable is not None:
+			if self._collider.m_collisionCount > 0:
+				self._renderable.setColor((0, 255, 0))
+			else:
+				self._renderable.setColor((255, 0, 0))
+
+class CircleEntity(Entity): 
+	def __init__(
+		self,
+		p_position: Vec2,
+		p_rotation: float,
+		p_health: float,
+		p_damage: float,
+		p_radius: float,
+		p_speed: float = 100.0,
+		p_rotationSpeed: float = 10,
+	):
 		Entity.__init__(
 			self = self,
 			p_position = p_position,
-			p_speed = p_speed,
+			p_rotation = p_rotation,
 			p_health = p_health,
 			p_damage = p_damage
 		)
-		self.m_shape = "circle"
-		self.m_renderable = CircleRenderable(p_radius)
-		self.m_radius = p_radius
+		self.m_radius: float = p_radius
+		self.m_speed: float = p_speed
+		self.m_renderable: Renderable = CircleRenderable(p_radius)
 
 	def draw(self):
 		self.m_renderable.draw(WINDOW.m_screen, self.m_position)
 
-import math
 class RectangleEntity(Entity):
-	def __init__(self, p_position: Vec2, p_dimensions: Vec2, p_speed: float = 100.0, p_rotationSpeed: float = 0.5, p_health: float = 100.0, p_damage: float = 0):
+	def __init__(
+		self,
+		p_position: Vec2,
+		p_rotation: float,
+		p_health: float,
+		p_damage: float,
+		p_dimensions: Vec2,
+		p_speed: float,
+		p_rotationSpeed: float
+	):
 		Entity.__init__(
 			self = self,
 			p_position = p_position,
-			p_speed = p_speed,
-			p_rotationSpeed= p_rotationSpeed,
+			p_rotation = p_rotation,
 			p_health = p_health,
 			p_damage = p_damage
 		)
-		self.m_shape = "rectangle"
-		self.m_renderable = RectangleRenderable(p_dimensions)
+
 		self.m_dimensions = p_dimensions
 		self.m_halfDimensions = 0.5 * p_dimensions
+		self.m_renderable = RectangleRenderable(p_dimensions)
 		
 		self.m_theta = math.pi * 0.5 #looking up so width and height make sense
 		self.m_axisX = Vec2(math.cos(self.m_theta), math.sin(self.m_theta)) #atomic vectors i and j to determine the rotation
 		self.m_axisY = Vec2(-math.sin(self.m_theta), math.cos(self.m_theta))
 
-		self.m_dirty_geometry = True
 		
 
 	def draw(self):

@@ -1,12 +1,12 @@
 import random
 import math
-from src.vector import Vec2
-from src.player import Player
-from src.bullet import Bullet
-from src.weapon import Weapon
-from src.enemy import Enemy, CircleEnemy
-from src.entityRegistry import ENTITY_REGISTRY
-from src.time import TIME
+from core.vector import Vec2
+from entities.player import Player
+from entities.bullet import Bullet
+from gameplay.weapon import Weapon
+from entities.enemy import Enemy, CircleEnemy
+from systems.entity_registry import ENTITY_REGISTRY
+from core.time import TIME
 class EnemySpawner:
 	def __init__(self, p_target: Player, p_spawnSpeed: float, p_spawnRadius: float):
 		self.m_target = p_target

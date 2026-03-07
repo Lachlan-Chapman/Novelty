@@ -1,12 +1,12 @@
 import pygame
 import math
 
-from src.vector import Vec2
-from src.entity import RectangleEntity
-from src.weapon import Weapon
+from core.vector import Vec2
+from entities.entity import RectangleEntity
+from gameplay.weapon import Weapon
 
-from src.time import TIME
-from src.window import WINDOW
+from core.time import TIME
+from core.window import WINDOW
 
 class Player(RectangleEntity):
 	def __init__(self, p_position: Vec2, p_dimensions: Vec2, p_speed: float = 100, p_rotationSpeed: float = 0.5, p_health: float = 1000.0, p_damage: float = 0, p_maxWeaponCount: int = 3):

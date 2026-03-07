@@ -3,20 +3,20 @@ import math
 
 import pygame
 pygame.init() #immediatly initialize before ANY OTHER object creation
-from src.window import WINDOW
+from core.window import WINDOW
 
-from src.entityRegistry import ENTITY_REGISTRY #the instance of the registry not the class
-from src.time import TIME
+from systems.entity_registry import ENTITY_REGISTRY #the instance of the registry not the class
+from core.time import TIME
 
-from src.vector import Vec2
-from src.entity import RectangleEntity, CircleEntity
+from core.vector import Vec2
+from entities.entity import RectangleEntity, CircleEntity
 
-from src.weapon import Weapon, Pistol
-from src.bullet import Bullet
+from gameplay.weapon import Weapon, Pistol
+from entities.bullet import Bullet
 
-from src.player import Player
-from src.enemy import CircleEnemy
-from src.enemySpawner import EnemySpawner
+from entities.player import Player
+from entities.enemy import CircleEnemy
+from systems.enemy_spawner import EnemySpawner
 
 
 def main():
@@ -89,36 +89,3 @@ def main():
 if __name__ == "__main__":
 	main()
 
-#TODO
-#enemy class - DONE
-#SAT (seperated axis theorem) collision - DONE
-	#get shape vertices
-	#get shape edge normals
-	#filter duplicate normals (maybe)
-	#filter opposing normals (maybe)
-	#for each axis, 
-		#for each shape
-			#project all vertices of a shape to it
-			#find the min and max then we have shape as an interval for that axis
-		#compare min and max of shapes together, if there is no overlap return False (no collision)
-		#if there is a collision on this axis, continue
-	#return True
-#OOB circle to rectangle collison allowing for rotated rects - DONE
-	#convert circle into axis alligned rect space with rect at (0, 0). so we are rotating the world and shifting to make the rect the center
-	#get closest point in/on rect to the circle (the closest point can be in the rect not just on the edge)
-	#get distance from closest point to circle
-	#check if the distance to the circle from the closest point is < radius which would mean collision
-#gobal list of all entities - DONE
-	#sweep to draw, update pos etc
-	#naive (o^2) check for collison
-	#sweep any 0 health enemies delete || outside the window
-#gobal time - DONE
-#global window - DONE
-#engine level damage gating - DONE
-#bullet object - DONE
-#shooting - DONE
-#player rotation with shooting
-#enemy and bullet collision
-#enemy death
-#remove dead enemies
-#enemy spawing

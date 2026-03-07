@@ -1,7 +1,7 @@
-from src.vector import Vec2
-from src.time import TIME
-from src.entity import Entity, RectangleEntity
-from src.bullet import Projectile, Bullet
+from core.vector import Vec2
+from core.time import TIME
+from entities.entity import Entity, RectangleEntity
+from entities.bullet import Projectile, Bullet
 class Weapon(RectangleEntity):
 	def __init__(self, p_name: str = "Weapon", p_projectile: Projectile = Bullet, p_shootSpeed: float = 1.0,  p_magazineSize: int = 10.0, p_reloadSpeed: float = 3.0):
 		RectangleEntity.__init__(
@@ -56,9 +56,9 @@ class Weapon(RectangleEntity):
 			self.reload()
 		
 
-from src.entity import Entity
-from src.bullet import Projectile, Bullet
-from src.entityRegistry import ENTITY_REGISTRY
+from entities.entity import Entity
+from entities.bullet import Projectile, Bullet
+from systems.entity_registry import ENTITY_REGISTRY
 
 class Pistol(Weapon): #default config for pistol
 	def __init__(self):
