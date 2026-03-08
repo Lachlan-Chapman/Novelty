@@ -1,15 +1,15 @@
-RAD_TO_DEG = 57.29577951308232
-DEG_TO_RAD = 0.017453292519943295
+RAD_TO_DEG: float = 57.29577951308232
+DEG_TO_RAD: float = 0.017453292519943295
 
-def clamp(p_value, p_min, p_max):
+def clamp(p_value, p_min: int | float, p_max: int | float) -> int | float:
 	if p_value < p_min:
 		return p_min
 	if p_value > p_max:
 		return p_max
 	return p_value
 
-def toDegrees(p_radians):
+def toDegrees(p_radians: float) -> float:
 	return p_radians * RAD_TO_DEG
 
-def toRadians(p_degrees):
+def toRadians(p_degrees: float) -> float:
 	return p_degrees * DEG_TO_RAD

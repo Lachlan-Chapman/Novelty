@@ -104,8 +104,7 @@ class CircleEntity(Entity):
 		p_health: float,
 		p_damage: float,
 		p_radius: float,
-		p_speed: float = 100.0,
-		p_rotationSpeed: float = 10,
+		p_speed: float = 100.0
 	):
 		Entity.__init__(
 			self = self,
