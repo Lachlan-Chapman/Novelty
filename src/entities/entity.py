@@ -20,6 +20,7 @@ class Entity:
 		) 
 		
 		self._id: int | None = None #used for collision pairing, ENTITY_REGISTRY sets this so only enetiies registerd will be apart of the actaul game
+		self._alive = True
 
 		self._collider: Collider | None = None
 		self._renderable: Renderable | None = None
@@ -79,6 +80,9 @@ class Entity:
 	def onCollisionEnter(self, p_other: "Entity") -> None: #allows for custom handling on how to act with differnet entity collision combos IE bullet with ship and ship with bullet etc
 		pass
 
+	def onCollisionExit(self, p_other: "Entity") -> None:
+		pass
+	
 	#RENDERING
 	def draw(self) -> None:
 		if self._renderable is not None:
@@ -141,6 +145,11 @@ class Actor(KinematicEntity):
 		self._health: float = p_health
 		self._damage: float = p_damage
 	
+	def applyDamage(self, p_damage: float) -> None:
+		self._health -= p_damage
+		if self._health <= 0:
+			self._alive = False
+
 	@property
 	def health(self) -> float:
 		return self._health
@@ -149,66 +158,3 @@ class Actor(KinematicEntity):
 	def damage(self) -> float:
 		return self._damage
 	
-
-class CircleEntity(Actor): 
-	def __init__(
-		self,
-		p_position: Vec2,
-		p_rotation: float,
-		p_velocity: Vec2 | None,
-		p_angularVelocity: float | None,
-		p_health: float,
-		p_damage: float,
-		p_radius: float,
-	):
-		Actor.__init__(
-			self,
-			p_position = p_position,
-			p_rotation = p_rotation,
-			p_velocity = p_velocity,
-			p_angularVelocity = p_angularVelocity,
-			p_health = p_health,
-			p_damage = p_damage
-		)
-		self._transform.size = Vec2(p_radius, p_radius)
-		self._collider: Collider = CircleCollider(p_radius)
-		self._renderable: Renderable = CircleRenderable(p_radius)
-
-class RectangleEntity(Actor):
-	def __init__(
-		self,
-		p_position: Vec2,
-		p_rotation: float,
-		p_velocity: Vec2 | None,
-		p_angularVelocity: float | None,
-		p_health: float,
-		p_damage: float,
-		p_size: Vec2,
-	):
-		Actor.__init__(
-			self,
-			p_position = p_position,
-			p_rotation = p_rotation,
-			p_velocity = p_velocity,
-			p_angularVelocity = p_angularVelocity,
-			p_health = p_health,
-			p_damage = p_damage
-		)
-		self._transform.size = p_size
-		self._collider: Collider = RectangleCollider(p_size)
-		self._renderable: Renderable = RectangleRenderable(p_size)
-	
-		self._vertices = []
-
-	def updateGeometry(self) -> None:
-		if not self._dirtyGeometry:
-			return
-		if self._collider is not None:
-			self._collider.updateTransform(self._transform)
-		self._dirtyGeometry = False
-
-	def getEdgeNormals(self) -> tuple[Vec2, Vec2]:
-		return self._axisI, self._axisJ
-
-
-		

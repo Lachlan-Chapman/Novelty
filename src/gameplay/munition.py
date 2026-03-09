@@ -1,31 +1,26 @@
 from core.vector import Vec2
-from entities.entity import Entity, CircleEntity
+from entities.entity import KinematicEntity, Actor
 from core.time import TIME
 from core.window import WINDOW
-class Projectile:
-	def __init__(self, p_type: str = "base"):
-		self.m_type = p_type
 
-	def updatePosition(self): #bullet handles it own position setting. other entities should spawn it and then forget about it
-		raise NotImplementedError
+class Munition(KinematicEntity):
+	def __init__(
+		self,
+		p_damage: float,
+		p_speed: float,
+		p_penetrationLimit: int = 1
+	):
+		self._damage: float = p_damage
+		self._speed: float = p_speed
+		self._penetrationLimit: int = p_penetrationLimit
+		self._penetrationCount = 0
 
-
-class Bullet(CircleEntity, Projectile):
+	def onCollisionEnter(self, p_other: Actor) -> None:
+		p_other.damage()
+		self._alive = False
+class Bullet(Munition):
 	def __init__(self, p_startPosition: Vec2, p_direction: Vec2):
-		CircleEntity.__init__(
-			self,
-			p_position = p_startPosition,
-			p_radius = 5,
-			p_speed = 200,
-			p_health = 1,
-			p_damage = 100.0
-		)
-
-		Projectile.__init__(
-			self,
-			p_type = "bullet",
-		)
-
+		
 		self.m_direction = p_direction
 
 	def updatePosition(self):

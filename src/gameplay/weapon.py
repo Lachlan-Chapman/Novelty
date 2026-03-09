@@ -1,7 +1,27 @@
 from core.vector import Vec2
 from core.time import TIME
 from entities.entity import Entity, RectangleEntity
-from entities.bullet import Projectile, Bullet
+from gameplay.munition import Munition
+
+class Weapon:
+	def __init__(
+		self,
+		p_munition: type[Munition],
+		p_magazineSize: int,
+		p_shotCooldown: float,
+		p_realodSpeed: float
+	):
+		self._munition = p_munition
+		self._magazineSize = p_magazineSize
+		self._shotCooldown = p_shotCooldown
+		self._reloadSpeed = p_realodSpeed
+
+		self._isReloading: bool = False
+		self._isShooting: bool = False
+
+		self._reloadFinish: float = 0.0
+		self._shotFinish: float = 0.0
+
 class Weapon(RectangleEntity):
 	def __init__(self, p_name: str = "Weapon", p_projectile: Projectile = Bullet, p_shootSpeed: float = 1.0,  p_magazineSize: int = 10.0, p_reloadSpeed: float = 3.0):
 		RectangleEntity.__init__(
@@ -11,14 +31,15 @@ class Weapon(RectangleEntity):
 		)
 		self.m_name = p_name
 
-		self.m_projectile = p_projectile
+		self._munition = p_mun
+
+		self.m_magazineSize = p_magazineSize
+		self.m_bulletCount = 0
 
 		self.m_shootSpeed = p_shootSpeed
 		self.m_finishedShooting = False
 		self.m_shootFinishTime = 0.0
 
-		self.m_magazineSize = p_magazineSize
-		self.m_bulletCount = 0
 
 		self.m_reloadSpeed = p_reloadSpeed #how long to reload
 		self.m_finishedReloading = False
@@ -37,7 +58,7 @@ class Weapon(RectangleEntity):
 		self.m_reloadFinishTime = TIME.m_totalTime + self.m_reloadSpeed
 		self.m_bulletCount = self.m_magazineSize
 
-	def shoot(self, p_shooter: Entity):
+	def fire(self):
 		#make these local if no need to debug
 		self.m_finishedReloading = TIME.m_totalTime >= self.m_reloadFinishTime
 		self.m_finishedShooting = TIME.m_totalTime >= self.m_shootFinishTime
@@ -57,7 +78,7 @@ class Weapon(RectangleEntity):
 		
 
 from entities.entity import Entity
-from entities.bullet import Projectile, Bullet
+from src.gameplay.munition import Projectile, Bullet
 from systems.entity_registry import ENTITY_REGISTRY
 
 class Pistol(Weapon): #default config for pistol
