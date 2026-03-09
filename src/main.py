@@ -33,7 +33,7 @@ def main():
 		p_maxWeaponCount = 3
 	)
 
-	player.m_renderable.setColor((255, 255, 255))
+	player.m_renderer.setColor((255, 255, 255))
 	player.addWeapon(Weapon(
 		p_name = "Turret",
 		p_projectile = Bullet,

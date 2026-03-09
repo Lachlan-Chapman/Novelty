@@ -31,7 +31,7 @@
 		["{", "}"]
 	],
 
-	"editor.mouseWheelScrollSensitivity": 3,
+	"editor.mouseWheelScrollSensitivity": 1,
 	"editor.smoothScrolling": true,
 	"editor.matchBrackets": "always",
 

@@ -1,24 +1,50 @@
 import math
 
+
+
 from core.vector import Vec2
 from core.transform import Transform
 
+from physics.collision import Collider
+from render.renderable import RectangleRenderable
+
+
 from entities.entity import Entity
+from entities.projectile import Projectile
 
 from gameplay.weapon import Weapon
 from gameplay.munition import Munition
+
+
+from systems.entity_registry import ENTITY_REGISTRY
 
 class Armory:
 	def __init__(
 		self,
 		p_maxWeaponCount: int,
-		p_weapons: list[Weapon] | None = None
+		p_weapons: list[Weapon] | None = None,
+		p_barrelPosition: Vec2 | None = None,
+		p_barrelDirection: Vec2 | None = None
 	):
 		self._maxWeaponCount = p_maxWeaponCount
 		self._weapons: list[Weapon] = p_weapons if p_weapons is not None else []
 
 		self._currentWeapon: int = 0
 		self._ammo: dict[type[Munition], int]
+
+		self._barrel: Entity = Entity(
+			p_position = p_barrelPosition,
+			p_rotation = math.atan2(p_barrelDirection.y, p_barrelDirection.x)
+		)
+		self._barrel._renderer = RectangleRenderable(
+			p_size = Vec2(15.0, 10.0)
+		)
+
+	#UPDATE BARREL LOCATION
+	def updateBarrel(self, p_position: Vec2, p_direction: Vec2):
+		self._barrel.position = p_position
+		self._barrel.rotation = math.atan2(p_direction.y, p_direction.x)
+		self._barrel.draw()
 
 	#UPDATE STORE
 	def addAmmo(self, p_munition: type[Munition], p_amount: int) -> None:
@@ -38,18 +64,24 @@ class Armory:
 	#FIRING
 	def shoot(
 		self,
-		p_barrel: Transform,
-		p_ignore: list[Entity]
+		p_ignoreColliders: set[Collider]
 	) -> None:
 		weapon = self._weapons[self._currentWeapon]
 		if weapon.shoot(): #attemp shoot | if true, the weapon has shot and updated internall state
-			spawn_position = p_barrel.position
-			direction = Vec2(math.cos(p_barrel.rotation), math.sin(p_barrel.rotation))
-			projectile = 
-
-
-
-
+			direction = Vec2(math.cos(self._barrel.rotation), math.sin(p_barrel.rotation))
+			projectile = Projectile(
+				weapon.munition( #entity wrapper around munition config
+					p_position = self._barrel.position,
+					p_direction = direction
+				),
+				p_ignoreColliders = p_ignoreColliders
+			)
+			ENTITY_REGISTRY.add(projectile)
+		
+		if weapon.requestingReload and not weapon.reloading: #has the weapon exhasuted its magazine
+			if self._ammo.get(weapon.munition, 0) > 0:  #do we have ammo in the armory to reload the gun with?
+				self._ammo[weapon.munition] -= 1
+				weapon.reload()
 
 	#GETTERS
 	@property

@@ -34,16 +34,16 @@ class CircleRenderable(Renderable):
 class RectangleRenderable(Renderable):
 	def __init__(
 			self,
-			p_dimensions: Vec2
+			p_size: Vec2
 		):
 		Renderable.__init__(self)
-		self._dimensions: Vec2 = p_dimensions
+		self._size: Vec2 = p_size
 
 	def draw(self, p_position: Vec2, p_theta: float) -> None:
 		surface = pygame.Surface(
 			(
-				int(self._dimensions.x),
-				int(self._dimensions.y)
+				int(self._size.x),
+				int(self._size.y)
 			),
 			pygame.SRCALPHA
 		)

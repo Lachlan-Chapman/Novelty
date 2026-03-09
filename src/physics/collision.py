@@ -4,10 +4,15 @@ from core.transform import Transform
 from core.utils import clamp
 
 class Collider:
-	def __init__(self):
+	def __init__(
+		self,
+		p_ignoreColliders: set["Collider"] | None = None
+	):
+		self._ignoreColliders: set["Collider"] = p_ignoreColliders if p_ignoreColliders is not None else set()
 		self._position: Vec2 = Vec2(0.0, 0.0)
 		self._canCollide: bool = True
 		self._collisionCount: int = 0
+
 
 	def canCollide(self, p_canCollide: bool) -> None:
 		self._canCollide = p_canCollide
@@ -56,6 +61,9 @@ class Collider:
 	
 	def overlaps(self, p_other: "Collider") -> bool:
 		if not self._canCollide:
+			return False
+		
+		if p_other in self._ignoreColliders:
 			return False
 		
 		if isinstance(self, CircleCollider) and isinstance(p_other, CircleCollider):

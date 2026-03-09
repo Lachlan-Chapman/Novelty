@@ -23,7 +23,7 @@ class Entity:
 		self._alive = True
 
 		self._collider: Collider | None = None
-		self._renderable: Renderable | None = None
+		self._renderer: Renderable | None = None
 		self._dirtyGeometry = True
 
 	def _set_id(self, p_id: int) -> None:
@@ -85,8 +85,8 @@ class Entity:
 	
 	#RENDERING
 	def draw(self) -> None:
-		if self._renderable is not None:
-			self._renderable.draw(self._transform.position, self._transform.rotation)
+		if self._renderer is not None:
+			self._renderer.draw(self._transform.position, self._transform.rotation)
 
 	#GETTERS
 	@property
@@ -103,11 +103,11 @@ class Entity:
 
 	#DEBUGGING
 	def drawCollision(self) -> None:
-		if self._collider is not None and self._renderable is not None:
+		if self._collider is not None and self._renderer is not None:
 			if self._collider.collisionCount > 0:
-				self._renderable.setColor((0, 255, 0))
+				self._renderer.setColor((0, 255, 0))
 			else:
-				self._renderable.setColor((255, 0, 0))
+				self._renderer.setColor((255, 0, 0))
 
 class KinematicEntity(Entity):
 	def __init__(

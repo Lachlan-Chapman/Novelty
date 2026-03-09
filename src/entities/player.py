@@ -1,66 +1,77 @@
 import pygame
+from pygame.key import ScancodeWrapper
 import math
 
 from core.vector import Vec2
-from entities.entity import RectangleEntity
+
+
+from entities.entity import Entity, Actor
 from gameplay.weapon import Weapon
 
 from core.time import TIME
 from core.window import WINDOW
 
-class Player(RectangleEntity):
-	def __init__(self, p_position: Vec2, p_dimensions: Vec2, p_speed: float = 100, p_rotationSpeed: float = 0.5, p_health: float = 1000.0, p_damage: float = 0, p_maxWeaponCount: int = 3):
-		RectangleEntity.__init__(
+from physics.collision import Collider, RectangleCollider
+from render.renderable import Renderable, RectangleRenderable
+
+from systems.armory import Armory
+
+class Player(Actor):
+	def __init__(
+		self,
+		p_health: float,
+		p_damage: float,
+		p_size: Vec2
+	):
+		Actor.__init__(
 			self,
-			p_position = p_position,
-			p_dimensions = p_dimensions,
-			p_speed = p_speed,
-			p_rotationSpeed = p_rotationSpeed,
+			p_position = Vec2(
+				WINDOW.width // 2,
+				WINDOW.height // 2
+			),
+			p_rotation = 0, #centered at the screen never translates
+			p_velocity = Vec2(0.0, 0.0),
+			p_angularVelocity = 0.0,
 			p_health = p_health,
 			p_damage = p_damage
 		)
-		self.m_maxWeaponCount = p_maxWeaponCount
-		self.m_currentWeapon = 0
-		self.m_weapons = []
-		self.setRotation(math.tau * 0.75)
 
-	def damage(self, p_damage):
-		RectangleEntity.damage(self, p_damage = p_damage)
-		if self.m_health <= 0:
-			print(f"You Lasted: {TIME.time}s")
-	
-	def addWeapon(self, p_weapon: Weapon):
-		if len(self.m_weapons) < self.m_maxWeaponCount:
-			p_weapon.ownedBy(self) #this entity now controls the guns position and things for rendering
-			self.m_weapons.append(p_weapon)
+		self._collider: Collider = RectangleCollider(p_size)
+		self._renderer: Renderable = RectangleRenderable(p_size)
+		self._armory: Armory = Armory(p_maxWeaponCount = 3)
 
-
-	def move(self, p_keys):
+	def handleRotationInput(self, p_keys: ScancodeWrapper) -> None:
 		theta = 0.0
-		#get keyboard input directions
 		if p_keys[pygame.K_a]:
 			theta -= self.m_rotationSpeed
 		if p_keys[pygame.K_d]:
 			theta += self.m_rotationSpeed
-		theta *= TIME.deltaTime #adjust to be rotating speed per second
-		theta_prime = self.m_theta + theta
-		theta_prime = theta_prime % math.tau #wrap to be from [0, 2pi)
+		self.offsetRotation(theta * TIME.deltaTime) #adjust to be rotating speed per second
+		
+		direction = Vec2(
+			math.cos(self._transform.rotation),
+			math.sin(self._transform.rotation)
+		)
+		self._armory.updateBarrel(
+			p_position = self._transform.position + (direction * self._transform.size.magnitude * 1.25),
+			p_direction = direction
+		)
 
-		self.setRotation(theta_prime)
-	def shoot(self, p_keys):
+	def handleArmoryInput(self, p_keys: ScancodeWrapper) -> None:
 		if p_keys[pygame.K_SPACE]:
+			self._armory.shoot()
 			if len(self.m_weapons) > 0:
 				self.m_weapons[self.m_currentWeapon].shoot(self) #creates bullet from this position
 
+	def handleInput(self, p_keys: ScancodeWrapper) -> None:
+		#rotation
+		self.handleRotationInput(p_keys)
+		#shooting
+		self.handleArmoryInput(p_keys)
 
 	def draw(self):
-		RectangleEntity.draw(self) #draw player as normal
-		#based on theta and position and size set the barrel location
-		if len(self.m_weapons) > 0:
-			weapon = self.m_weapons[self.m_currentWeapon]
-			weapon.setPosition(self.m_position + self.getDirection() * self.m_dimensions.y) #creates bullet from this position
-			weapon.setRotation(self.m_theta)
-			weapon.draw()
+		super().draw()
+		self._armory._barrel.draw() #player has to handle the visual representation of the barrel
 
 
 
