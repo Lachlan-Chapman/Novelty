@@ -40,7 +40,7 @@ class EnemySpawner:
 		
 
 	def spawnEnemy(self):
-		self.m_finishSpawn = TIME.m_totalTime >= self.m_spawnFinishTime
+		self.m_finishSpawn = TIME.time >= self.m_spawnFinishTime
 		if self.m_finishSpawn:
 			random_theta = random.random() * math.tau
 			spawn_location = self.m_target.m_position + Vec2(
@@ -69,4 +69,4 @@ class EnemySpawner:
 			))
 			ENTITY_REGISTRY.add(enemy)
 
-			self.m_spawnFinishTime = TIME.m_totalTime + self.m_spawnSpeed
+			self.m_spawnFinishTime = TIME.time + self.m_spawnSpeed

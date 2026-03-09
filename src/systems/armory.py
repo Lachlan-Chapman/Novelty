@@ -17,8 +17,8 @@ class Armory:
 		self._ammo[p_munition] = self._ammo.get(p_munition, 0) + p_amount
 
 	def addWeapon(self, p_weapon: Weapon) -> None:
-		if len(self._weapons < self._maxWeaponCount):
-			self._weapons.add(p_weapon)
+		if len(self._weapons) < self._maxWeaponCount:
+			self._weapons.append(p_weapon)
 	
 	#WEAPON CYCLE
 	def nextWeapon(self) -> None:
@@ -29,8 +29,8 @@ class Armory:
 
 	#FIRING
 	def shoot(self) -> None:
-		self._weapons[self._currentWeapon].fire()
-
+		self._weapons[self._currentWeapon].shoot()
+ 
 	#GETTERS
 	@property
 	def weapons(self) -> list[Weapon]:

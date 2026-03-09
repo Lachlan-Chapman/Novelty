@@ -1,6 +1,4 @@
-from core.vector import Vec2
 from core.time import TIME
-from entities.entity import Entity, RectangleEntity
 from gameplay.munition import Munition
 
 class Weapon:
@@ -9,88 +7,66 @@ class Weapon:
 		p_munition: type[Munition],
 		p_magazineSize: int,
 		p_shotCooldown: float,
-		p_realodSpeed: float
+		p_reloadSpeed: float
 	):
-		self._munition = p_munition
+		self._munition: type[Munition] = p_munition
 		self._magazineSize = p_magazineSize
-		self._shotCooldown = p_shotCooldown
-		self._reloadSpeed = p_realodSpeed
+		self._bulletCount: int = p_magazineSize
 
+		#how long to wait for each event to finish
+		self._reloadSpeed: float = p_reloadSpeed
+		self._shotCooldown: float = p_shotCooldown
+
+		#state trackers
 		self._isReloading: bool = False
 		self._isShooting: bool = False
 
+		#global time when these events finish
 		self._reloadFinish: float = 0.0
 		self._shotFinish: float = 0.0
 
-class Weapon(RectangleEntity):
-	def __init__(self, p_name: str = "Weapon", p_projectile: Projectile = Bullet, p_shootSpeed: float = 1.0,  p_magazineSize: int = 10.0, p_reloadSpeed: float = 3.0):
-		RectangleEntity.__init__(
-			self,
-			p_position = Vec2(0.0, 0.0),
-			p_dimensions = Vec2(5.0, 10.0)
+	def reload(self) -> None:
+		self._isReloading = True
+		self._reloadFinish = TIME.time + self._reloadSpeed
+		self._bulletCount = self._magazineSize
+
+	def canShoot(self) -> bool:
+		self._isReloading = TIME.time < self._reloadFinish
+		self._isShooting = TIME.time < self._shotFinish
+		return(
+			not self._isReloading
+			and not self._isShooting
+			and self._bulletCount > 0
 		)
-		self.m_name = p_name
 
-		self._munition = p_mun
-
-		self.m_magazineSize = p_magazineSize
-		self.m_bulletCount = 0
-
-		self.m_shootSpeed = p_shootSpeed
-		self.m_finishedShooting = False
-		self.m_shootFinishTime = 0.0
-
-
-		self.m_reloadSpeed = p_reloadSpeed #how long to reload
-		self.m_finishedReloading = False
-		self.m_reloadFinishTime = 0.0
+	def shoot(self) -> bool:
+		if not self.canShoot():
+			return False
 		
-		self.m_collider.canCollide(False) #purely visual, for the time being no collision | entity registry has no concept of barrel, its on the player to render and handle
-		self.reload()
+		self._isShooting = True
+		self._shotFinish = TIME.time + self._shotCooldown
+		self._bulletCount -= 1
 
-	#in case custom weapons need to created on the fly
-	def configure(self, p_name: str, p_shootSpeed: float, p_magazineSize: int, p_reloadSpeed):
-		self.m_name = p_name
-		self.m_shootSpeed = p_shootSpeed
-		self.m_magazineSize = p_magazineSize
-		self.m_reloadSpeed = p_reloadSpeed
-	def reload(self):
-		self.m_reloadFinishTime = TIME.m_totalTime + self.m_reloadSpeed
-		self.m_bulletCount = self.m_magazineSize
-
-	def fire(self):
-		#make these local if no need to debug
-		self.m_finishedReloading = TIME.m_totalTime >= self.m_reloadFinishTime
-		self.m_finishedShooting = TIME.m_totalTime >= self.m_shootFinishTime
-		if self.m_finishedReloading and self.m_finishedShooting:
-			self.m_shootFinishTime = TIME.m_totalTime + self.m_shootSpeed
-			self.m_bulletCount -= 1 #we shot so our magazine now drops
-
-			#create and register whatever we are shooting
-			projectile = self.m_projectile(
-				p_shooter.m_position,
-				p_shooter.getDirection()
-			)
-			projectile.ownedBy(p_shooter)
-			ENTITY_REGISTRY.add(projectile)
-		if self.m_bulletCount <= 0:
+		if self._bulletCount <= 0:
 			self.reload()
-		
+		return True
 
-from entities.entity import Entity
-from src.gameplay.munition import Projectile, Bullet
-from systems.entity_registry import ENTITY_REGISTRY
+	#GETTERS to return currently tracked state
+	@property
+	def bullets(self) -> int:
+		return self._bulletCount
+	
+	@property
+	def magazine(self) -> int:
+		return self._magazineSize
+	@property
+	def munition(self) -> type[Munition]:
+		return self._munition
+	
+	@property
+	def reloading(self) -> bool:
+		return self._isReloading
 
-class Pistol(Weapon): #default config for pistol
-	def __init__(self):
-		Weapon.__init__(
-			self,
-			p_name = "Pistol",
-			p_projectile = Bullet,
-			p_shootSpeed = 1,
-			p_magazineSize = 2,
-			p_reloadSpeed = 3
-		)
-	
-	
-			
+	@property 
+	def shooting(self) -> bool:
+		return self._isShooting

@@ -24,7 +24,7 @@ class Bullet(Munition):
 		self.m_direction = p_direction
 
 	def updatePosition(self):
-		self.m_position += self.m_direction * self.m_speed * TIME.m_deltaTime
+		self.m_position += self.m_direction * self.m_speed * TIME.deltaTime
 		if self.m_position.x <= 0 or self.m_position.x >= WINDOW.m_width:
 			self.m_alive = False
 		if self.m_position.y <= 0 or self.m_position.y >= WINDOW.m_height:

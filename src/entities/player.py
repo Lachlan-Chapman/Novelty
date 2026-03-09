@@ -27,7 +27,7 @@ class Player(RectangleEntity):
 	def damage(self, p_damage):
 		RectangleEntity.damage(self, p_damage = p_damage)
 		if self.m_health <= 0:
-			print(f"You Lasted: {TIME.m_totalTime}s")
+			print(f"You Lasted: {TIME.time}s")
 	
 	def addWeapon(self, p_weapon: Weapon):
 		if len(self.m_weapons) < self.m_maxWeaponCount:
@@ -42,7 +42,7 @@ class Player(RectangleEntity):
 			theta -= self.m_rotationSpeed
 		if p_keys[pygame.K_d]:
 			theta += self.m_rotationSpeed
-		theta *= TIME.m_deltaTime #adjust to be rotating speed per second
+		theta *= TIME.deltaTime #adjust to be rotating speed per second
 		theta_prime = self.m_theta + theta
 		theta_prime = theta_prime % math.tau #wrap to be from [0, 2pi)
 

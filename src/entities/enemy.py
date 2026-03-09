@@ -1,4 +1,3 @@
-
 import math
 from core.vector import Vec2
 from entities.entity import Entity, CircleEntity
@@ -38,7 +37,7 @@ class CircleEnemy(CircleEntity, Enemy):
 	def updatePosition(self): #moves toward target
 		delta_pos = (self.m_target.m_position - self.m_position).normalise()
 		self.offsetPosition(
-			delta_pos * self.m_speed * TIME.m_deltaTime
+			delta_pos * self.m_speed * TIME.deltaTime
 		)
 	
 	def updateRotation(self): #looks at target
@@ -59,7 +58,3 @@ class CircleEnemy(CircleEntity, Enemy):
 		if not self.m_weapon is None:
 			self.m_weapon.shoot(self)
 
-	
-
-
-	
