@@ -7,7 +7,7 @@ class EntityRegistry:
 		self.m_previousCollisions = set()
 		self.m_entityIdentityCounter = 0
 
-	def add(self, p_other: "Entity"):
+	def add(self, p_other: Entity):
 		if isinstance(p_other, Entity):
 			#register with a unique once only ID
 			p_other.m_identity = self.m_entityIdentityCounter
@@ -39,6 +39,8 @@ class EntityRegistry:
 				if a.m_owner is b or b.m_owner is a:
 					continue #friendly collision means they are transparent to one another and allowed to collide
 
+				a.updateGeometry()
+				b.updateGeometry()
 				if a.collideWith(b): #stage just to see if the objects touch
 					pair = (a.m_identity, b.m_identity) #since our loop is already from start of list to latest the ID at the end of the registry is always greater than the previous | dont need sorting
 					#pair = tuple(sorted(a.m_identity, b.m_identity)) #using sorting and the set non duplicate method

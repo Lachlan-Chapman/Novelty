@@ -6,8 +6,8 @@ class Vec2:
 		p_x: float = 0.0,
 		p_y: float = 0.0
 	):
-		self._x: float = p_x
-		self._y: float = p_y
+		self.x: float = p_x
+		self.y: float = p_y
 	
 	#OPERATOR OVERLOADS
 	def __add__(self, p_other: "Vec2") -> "Vec2" | NotImplementedType:
@@ -35,8 +35,8 @@ class Vec2:
 	def __imul__(self, p_scalar: int | float) -> "Vec2" | NotImplementedType:
 		if not isinstance(p_scalar, (int, float)):
 			return NotImplemented
-		self._x *= p_scalar
-		self._y *= p_scalar
+		self.x *= p_scalar
+		self.y *= p_scalar
 		return self
 
 	def __eq__(self, p_other: "Vec2") -> bool | NotImplementedType:
@@ -64,12 +64,3 @@ class Vec2:
 		if _magnitude == 0:
 			return Vec2(0.0, 0.0)
 		return Vec2(self.x / _magnitude, self.y / _magnitude)
-
-	#GETTERS
-	@property
-	def x(self) -> float:
-		return self._x
-
-	@property
-	def y(self) -> float:
-		return self._y

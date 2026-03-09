@@ -11,7 +11,7 @@ from core.window import WINDOW
 class Player(RectangleEntity):
 	def __init__(self, p_position: Vec2, p_dimensions: Vec2, p_speed: float = 100, p_rotationSpeed: float = 0.5, p_health: float = 1000.0, p_damage: float = 0, p_maxWeaponCount: int = 3):
 		RectangleEntity.__init__(
-			self = self,
+			self,
 			p_position = p_position,
 			p_dimensions = p_dimensions,
 			p_speed = p_speed,
@@ -25,7 +25,7 @@ class Player(RectangleEntity):
 		self.setRotation(math.tau * 0.75)
 
 	def damage(self, p_damage):
-		RectangleEntity.damage(self = self, p_damage = p_damage)
+		RectangleEntity.damage(self, p_damage = p_damage)
 		if self.m_health <= 0:
 			print(f"You Lasted: {TIME.m_totalTime}s")
 	
@@ -54,7 +54,7 @@ class Player(RectangleEntity):
 
 
 	def draw(self):
-		RectangleEntity.draw(self = self) #draw player as normal
+		RectangleEntity.draw(self) #draw player as normal
 		#based on theta and position and size set the barrel location
 		if len(self.m_weapons) > 0:
 			weapon = self.m_weapons[self.m_currentWeapon]

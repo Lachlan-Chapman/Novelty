@@ -1,11 +1,11 @@
-import pygame
 import math
 
 from core.window import WINDOW
 from core.console import CONSOLE
 from core.vector import Vec2
+from core.transform import Transform
 
-from physics.collision import Collider
+from physics.collision import Collider, CircleCollider, RectangleCollider
 from render.renderable import Renderable, CircleRenderable, RectangleRenderable
 
 class Entity:
@@ -14,8 +14,10 @@ class Entity:
 		p_position: Vec2,
 		p_rotation: float
 	):
-		self._position: Vec2 = p_position
-		self._rotation: float = p_rotation
+		self._transform: Transform = Transform(
+			p_position = p_position,
+			p_rotation = p_rotation
+		) 
 		
 		self._id: int | None = None #used for collision pairing, ENTITY_REGISTRY sets this so only enetiies registerd will be apart of the actaul game
 
@@ -31,20 +33,20 @@ class Entity:
 
 	#ROTATION SETTERS
 	def setRotation(self, p_theta: float) -> None: #rotation in radians NEED TO CONVERT TO DEG if for some reason something requires it (pygame renderer)
-		self._rotation = p_theta
-		self._rotation = self._rotation % math.tau
+		self._transform.rotation = p_theta
+		self._transform.rotation = self._transform.rotation % math.tau
 		self._dirtyGeometry = True
 
 	def offsetRotation(self, p_delta: float) -> None: #doesnt set but adds the delta rotation
-		self.setRotation(self._rotation + p_delta)
+		self.setRotation(self._transform.rotation + p_delta)
 
 	#POSITION SETTERS
 	def setPosition(self, p_position: Vec2) -> None: #sets exact position in screen coordinates
-		self._position = p_position
+		self._transform.position = p_position
 		self._dirtyGeometry = True
 
 	def offsetPosition(self, p_delta: Vec2) -> None: #doesnt set but adds the direction
-		self.setPosition(self._position + p_delta)
+		self.setPosition(self._transform.position + p_delta)
 
 	#INTERNAL UPDATES
 	def updateRotation(self) -> None: #for internally handled changes for AI or some function
@@ -58,6 +60,13 @@ class Entity:
 		self.updateRotation()
 
 	#COLLISIONS
+	def updateGeometry(self) -> None:
+		if not self._dirtyGeometry:
+			return
+		if self._collider is not None:
+			self._collider.updateTransform(self._transform)
+		self._dirtyGeometry = False
+
 	def overlaps(self, p_other: "Entity") -> bool:
 		if self._collider is None:
 			CONSOLE.error("Entity collider not set")
@@ -73,16 +82,16 @@ class Entity:
 	#RENDERING
 	def draw(self) -> None:
 		if self._renderable is not None:
-			self._renderable.draw(self._position, self._rotation)
+			self._renderable.draw(self._transform.position, self._transform.rotation)
 
 	#GETTERS
 	@property
 	def position(self) -> Vec2:
-		return self._position
+		return self._transform.position
 	
 	@property
 	def rotation(self) -> float:
-		return self._rotation
+		return self._transform.rotation
 	
 	@property
 	def id(self) -> int | None:
@@ -91,108 +100,115 @@ class Entity:
 	#DEBUGGING
 	def drawCollision(self) -> None:
 		if self._collider is not None and self._renderable is not None:
-			if self._collider.m_collisionCount > 0:
+			if self._collider.collisionCount > 0:
 				self._renderable.setColor((0, 255, 0))
 			else:
 				self._renderable.setColor((255, 0, 0))
 
-class CircleEntity(Entity): 
+class KinematicEntity(Entity):
 	def __init__(
 		self,
 		p_position: Vec2,
 		p_rotation: float,
+		p_velocity: Vec2 | None = None,
+		p_angularVelocity: float | None = None
+	):
+		Entity.__init__(
+			self,
+			p_position = p_position,
+			p_rotation = p_rotation
+		)
+		self._velocity: Vec2 = p_velocity if p_velocity is not None else Vec2(0.0, 0.0)
+		self._angularVelocity: float = p_angularVelocity if p_angularVelocity is not None else 0.0
+
+class Actor(KinematicEntity):
+	def __init__(
+		self,
+		p_position: Vec2,
+		p_rotation: float,
+		p_velocity: Vec2 | None,
+		p_angularVelocity: float | None,
+		p_health: float,
+		p_damage: float
+	):
+		KinematicEntity.__init__(
+			self,
+			p_position = p_position,
+			p_rotation = p_rotation,
+			p_velocity = p_velocity,
+			p_angularVelocity = p_angularVelocity
+		)
+		self._health: float = p_health
+		self._damage: float = p_damage
+	
+	@property
+	def health(self) -> float:
+		return self._health
+
+	@property
+	def damage(self) -> float:
+		return self._damage
+	
+
+class CircleEntity(Actor): 
+	def __init__(
+		self,
+		p_position: Vec2,
+		p_rotation: float,
+		p_velocity: Vec2 | None,
+		p_angularVelocity: float | None,
 		p_health: float,
 		p_damage: float,
 		p_radius: float,
-		p_speed: float = 100.0
 	):
-		Entity.__init__(
-			self = self,
+		Actor.__init__(
+			self,
 			p_position = p_position,
 			p_rotation = p_rotation,
+			p_velocity = p_velocity,
+			p_angularVelocity = p_angularVelocity,
 			p_health = p_health,
 			p_damage = p_damage
 		)
-		self.m_radius: float = p_radius
-		self.m_speed: float = p_speed
-		self.m_renderable: Renderable = CircleRenderable(p_radius)
+		self._transform.size = Vec2(p_radius, p_radius)
+		self._collider: Collider = CircleCollider(p_radius)
+		self._renderable: Renderable = CircleRenderable(p_radius)
 
-	def draw(self):
-		self.m_renderable.draw(WINDOW.m_screen, self.m_position)
-
-class RectangleEntity(Entity):
+class RectangleEntity(Actor):
 	def __init__(
 		self,
 		p_position: Vec2,
 		p_rotation: float,
+		p_velocity: Vec2 | None,
+		p_angularVelocity: float | None,
 		p_health: float,
 		p_damage: float,
-		p_dimensions: Vec2,
-		p_speed: float,
-		p_rotationSpeed: float
+		p_size: Vec2,
 	):
-		Entity.__init__(
-			self = self,
+		Actor.__init__(
+			self,
 			p_position = p_position,
 			p_rotation = p_rotation,
+			p_velocity = p_velocity,
+			p_angularVelocity = p_angularVelocity,
 			p_health = p_health,
 			p_damage = p_damage
 		)
+		self._transform.size = p_size
+		self._collider: Collider = RectangleCollider(p_size)
+		self._renderable: Renderable = RectangleRenderable(p_size)
+	
+		self._vertices = []
 
-		self.m_dimensions = p_dimensions
-		self.m_halfDimensions = 0.5 * p_dimensions
-		self.m_renderable = RectangleRenderable(p_dimensions)
-		
-		self.m_theta = math.pi * 0.5 #looking up so width and height make sense
-		self.m_axisX = Vec2(math.cos(self.m_theta), math.sin(self.m_theta)) #atomic vectors i and j to determine the rotation
-		self.m_axisY = Vec2(-math.sin(self.m_theta), math.cos(self.m_theta))
+	def updateGeometry(self) -> None:
+		if not self._dirtyGeometry:
+			return
+		if self._collider is not None:
+			self._collider.updateTransform(self._transform)
+		self._dirtyGeometry = False
 
-		
+	def getEdgeNormals(self) -> tuple[Vec2, Vec2]:
+		return self._axisI, self._axisJ
 
-	def draw(self):
-		self.m_renderable.draw(WINDOW.m_screen, self.m_position, self.m_theta)
 
-	def updateGeometry(self):
-		if not self.m_dirty_geometry:
-			return #no need to clean them leave state as is
-		
-		#generate vertices
-		#print("Updating Geometry")
-		self.m_vertices = [
-			Vec2(-self.m_halfDimensions.x, self.m_halfDimensions.y), #top left
-			Vec2(self.m_halfDimensions.x, self.m_halfDimensions.y), #top right
-			Vec2(self.m_halfDimensions.x, -self.m_halfDimensions.y), #bottom right
-			Vec2(-self.m_halfDimensions.x, -self.m_halfDimensions.y) #bottom left
-		]
-
-		#get reusable sin cos for current theta
-		cos_theta = math.cos(self.m_theta)
-		sin_theta = math.sin(self.m_theta)
-		for vertex in self.m_vertices: #rotate all points then put back into world space
-			x = vertex.x
-			y = vertex.y
-			vertex.x = (x * cos_theta) - (y * sin_theta) + self.m_position.x
-			vertex.y = (x * sin_theta) + (y * cos_theta) + self.m_position.y
-		
-		#reuse sin and cos to create local x and y axis of unit length
-		self.m_axes = [
-			Vec2(cos_theta, sin_theta),
-			Vec2(-sin_theta, cos_theta)
-		]
-		self.m_dirty_geometry = False #regardless after this the geometry is clean
-
-	def getEdgeNormals(self):
-		return self.m_axes
-
-	def project(self, p_axis: Vec2) -> Vec2:
-		min_projection = float("inf")
-		max_projection = -float("inf")
-
-		for vertex in self.m_vertices: #project and track min and max
-			projection = vertex.dot(p_axis)
-			if projection < min_projection:
-				min_projection = projection
-			if projection > max_projection:
-				max_projection = projection
-		return Vec2(min_projection, max_projection)
 		

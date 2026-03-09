@@ -47,7 +47,7 @@ class CircleEnemy(CircleEntity, Enemy):
 		self.setRotation(theta)
 
 	def update(self):
-		CircleEntity.update(self = self)
+		CircleEntity.update(self)
 		self.shoot()
 	
 	
