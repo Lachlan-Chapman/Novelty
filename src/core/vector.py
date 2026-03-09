@@ -1,5 +1,5 @@
 import math
-from types import NotImplementedType 
+from types import NotImplementedType
 class Vec2:
 	def __init__(
 		self,

@@ -6,7 +6,6 @@ from core.utils import clamp
 class Collider:
 	def __init__(self):
 		self._position: Vec2 = Vec2(0.0, 0.0)
-		self._rotation: float = 0.0
 		self._canCollide: bool = True
 		self._collisionCount: int = 0
 
@@ -15,7 +14,6 @@ class Collider:
 
 	def updateTransform(self, p_transform: Transform) -> None:
 		self._position = p_transform.position
-		self._rotation = p_transform.rotation
 
 	@staticmethod #Cirlce vs Circle | Squared Distance Test
 	def collideCircleCircle(p_circleA: "CircleCollider", p_circleB: "CircleCollider") -> bool: #for circle to circle comparison
@@ -94,7 +92,12 @@ class CircleCollider(Collider):
 class PolygonCollider(Collider):
 	def __init__(self):
 		Collider.__init__(self)
+		self._rotation = 0.0
 		self._vertices: list[Vec2] = []
+
+	def updateTransform(self, p_transform):
+		super().updateTransform(p_transform)
+		self._rotation = p_transform.rotation
 
 	def project(self, p_axis: Vec2) -> Vec2:
 		min_projection = float("inf")
@@ -118,10 +121,6 @@ class RectangleCollider(PolygonCollider):
 		self._halfSize: Vec2 = p_size * 0.5
 		self._axisI: Vec2 = Vec2(1.0, 0.0)
 		self._axisJ: Vec2 = Vec2(0.0, 1.0)
-
-	def updateDimensions(self, p_dimensions: Vec2) -> None:
-		self._dimensions = p_dimensions
-		self._halfSize = p_dimensions * 0.5
 
 	def updateTransform(self, p_transform):
 		super().updateTransform(p_transform)
