@@ -47,8 +47,6 @@ class Weapon:
 		self._shotFinish = TIME.time + self._shotCooldown
 		self._bulletCount -= 1
 
-		if self._bulletCount <= 0:
-			self.reload()
 		return True
 
 	#GETTERS to return currently tracked state
@@ -62,6 +60,10 @@ class Weapon:
 	@property
 	def munition(self) -> type[Munition]:
 		return self._munition
+	
+	@property
+	def requestingReload(self):
+		return self._bulletCount <= 0
 	
 	@property
 	def reloading(self) -> bool:

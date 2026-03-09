@@ -1,5 +1,13 @@
+import math
+
+from core.vector import Vec2
+from core.transform import Transform
+
+from entities.entity import Entity
+
 from gameplay.weapon import Weapon
 from gameplay.munition import Munition
+
 class Armory:
 	def __init__(
 		self,
@@ -28,14 +36,27 @@ class Armory:
 		self._currentWeapon = (self._currentWeapon - 1) % len(self._weapons)
 
 	#FIRING
-	def shoot(self) -> None:
-		self._weapons[self._currentWeapon].shoot()
- 
+	def shoot(
+		self,
+		p_barrel: Transform,
+		p_ignore: list[Entity]
+	) -> None:
+		weapon = self._weapons[self._currentWeapon]
+		if weapon.shoot(): #attemp shoot | if true, the weapon has shot and updated internall state
+			spawn_position = p_barrel.position
+			direction = Vec2(math.cos(p_barrel.rotation), math.sin(p_barrel.rotation))
+			projectile = 
+
+
+
+
+
 	#GETTERS
 	@property
 	def weapons(self) -> list[Weapon]:
 		return self._weapons
 	
+	@property
 	def ammo(self) -> dict[type[Munition], int]:
 		return self._ammo
 
