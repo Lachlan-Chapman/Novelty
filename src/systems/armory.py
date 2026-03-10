@@ -42,8 +42,8 @@ class Armory:
 
 	#UPDATE BARREL LOCATION
 	def updateBarrel(self, p_position: Vec2, p_direction: Vec2):
-		self._barrel.position = p_position
-		self._barrel.rotation = math.atan2(p_direction.y, p_direction.x)
+		self._barrel._transform.position = p_position
+		self._barrel._transform.rotation = math.atan2(p_direction.y, p_direction.x)
 		self._barrel.draw()
 
 	#UPDATE STORE
@@ -64,11 +64,11 @@ class Armory:
 	#FIRING
 	def shoot(
 		self,
-		p_ignoreColliders: set[Collider]
+		p_ignoreColliders: set[Collider] | None = None
 	) -> None:
 		weapon = self._weapons[self._currentWeapon]
 		if weapon.shoot(): #attemp shoot | if true, the weapon has shot and updated internall state
-			direction = Vec2(math.cos(self._barrel.rotation), math.sin(p_barrel.rotation))
+			direction = Vec2(math.cos(self._barrel.rotation), math.sin(self._barrel.rotation))
 			projectile = Projectile(
 				weapon.munition( #entity wrapper around munition config
 					p_position = self._barrel.position,

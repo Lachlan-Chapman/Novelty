@@ -38,7 +38,16 @@ class Player(Actor):
 
 		self._collider: Collider = RectangleCollider(p_size)
 		self._renderer: Renderable = RectangleRenderable(p_size)
-		self._armory: Armory = Armory(p_maxWeaponCount = 3)
+		
+		direction = Vec2(
+			math.cos(self._transform.rotation),
+			math.sin(self._transform.rotation)
+		)
+		self._armory: Armory = Armory(
+			p_maxWeaponCount = 3,
+			p_barrelPosition = self._transform.position + (direction * self._transform.size.magnitude * 1.25),
+			p_barrelDirection = direction
+		)
 
 	def handleRotationInput(self, p_keys: ScancodeWrapper) -> None:
 		theta = 0.0
@@ -59,9 +68,7 @@ class Player(Actor):
 
 	def handleArmoryInput(self, p_keys: ScancodeWrapper) -> None:
 		if p_keys[pygame.K_SPACE]:
-			self._armory.shoot()
-			if len(self.m_weapons) > 0:
-				self.m_weapons[self.m_currentWeapon].shoot(self) #creates bullet from this position
+			self._armory.shoot(p_ignoreColliders = [self._collider])
 
 	def handleInput(self, p_keys: ScancodeWrapper) -> None:
 		#rotation

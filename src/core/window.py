@@ -10,7 +10,7 @@ class Window:
 		self._height: int = p_height
 		self._name: str = p_name
 
-		self.m_screen = pygame.display.set_mode((p_width, p_height))
+		self._screen: pygame.Surface = pygame.display.set_mode((p_width, p_height))
 		pygame.display.set_caption(p_name)
 
 	@property

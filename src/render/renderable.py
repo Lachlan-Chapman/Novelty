@@ -41,11 +41,11 @@ class RectangleRenderable(Renderable):
 
 	def draw(self, p_position: Vec2, p_theta: float) -> None:
 		surface = pygame.Surface(
-			(
+			size = (
 				int(self._size.x),
 				int(self._size.y)
 			),
-			pygame.SRCALPHA
+			masks = pygame.SRCALPHA
 		)
 		surface.fill(self._color)
 		
@@ -57,4 +57,7 @@ class RectangleRenderable(Renderable):
 				int(p_position.y)
 			)
 		)
-		WINDOW._screen.blit(rotated_surface, rotated_rect)
+		WINDOW._screen.blit(
+			source = rotated_surface,
+			dest = rotated_rect
+		)

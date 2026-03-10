@@ -3,52 +3,39 @@ import math
 
 import pygame
 pygame.init() #immediatly initialize before ANY OTHER object creation
+
 from core.window import WINDOW
-
-from systems.entity_registry import ENTITY_REGISTRY #the instance of the registry not the class
 from core.time import TIME
-
 from core.vector import Vec2
-from entities.entity import RectangleEntity, CircleEntity
-
-from gameplay.weapon import Weapon, Pistol
-from entities.bullet import Bullet
 
 from entities.player import Player
-from entities.enemy import CircleEnemy
+
+from gameplay.weapon import Weapon
+from gameplay.munition import Bullet
+
+
+from systems.entity_registry import ENTITY_REGISTRY #the instance of the registry not the class
 from systems.enemy_spawner import EnemySpawner
 
 
 def main():
-	player = Player(
-		p_position = Vec2(
-			WINDOW.m_width // 2,
-			WINDOW.m_height // 2
-		),
-		p_dimensions = Vec2(25, 25),
-		p_speed = 0.0,
-		p_rotationSpeed = math.pi * 1.5,
-		p_health = 500.0,
-		p_damage = 100.0,
-		p_maxWeaponCount = 3
-	)
+	# player = Player(
+	# 	p_health = 500.0,
+	# 	p_damage = 100,
+	# 	p_size = Vec2(20, 20)
+	# )
 
-	player.m_renderer.setColor((255, 255, 255))
-	player.addWeapon(Weapon(
-		p_name = "Turret",
-		p_projectile = Bullet,
-		p_shootSpeed = 0.2,
-		p_magazineSize = 1,
-		p_reloadSpeed = 0
-	))
-	ENTITY_REGISTRY.add(player)
+	# player._renderer.setColor((255, 255, 255))
+	# player._armory.addWeapon(Weapon(
+	# 	p_munition = Bullet,
+	# 	p_magazineSize = 5,
+	# 	p_reloadSpeed = 2,
+	# 	p_shotCooldown = 1
+	# ))
+	# ENTITY_REGISTRY.add(player)
 
-	enemy_spawner = EnemySpawner(
-		p_target = player,
-		p_spawnSpeed = 1.8,
-		p_spawnRadius = 250
-	)
 
+	
 
 	running = True
 	while running:
@@ -60,25 +47,25 @@ def main():
 				running = False
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
 				running = False
+		
 		#Gather Inputs
 		keys = pygame.key.get_pressed()
 		
 		#Entity Actions
-		enemy_spawner.spawnEnemy()
-		ENTITY_REGISTRY.update()
-		player.shoot(keys)
+		#enemy_spawner.spawnEnemy()
+		#ENTITY_REGISTRY.update()
 
-		#Update Entity Positions
-		player.move(keys)
+		#User Input
+		#player.handleInput(keys)
 
 		#Check Collisions
-		ENTITY_REGISTRY.handleCollision()
+		#ENTITY_REGISTRY.handleCollision()
 
 		#Clean Up
-		ENTITY_REGISTRY.removeDead()
+		#ENTITY_REGISTRY.removeDead()
 		
 		#Render
-		WINDOW.m_screen.fill((20, 20, 26)) #clears screen with given color
+		WINDOW._screen.fill((20, 20, 26)) #clears screen with given color
 		ENTITY_REGISTRY.draw()
 		pygame.display.flip() #swap graphics buffer to display the render of this loop
 	
@@ -89,3 +76,8 @@ def main():
 if __name__ == "__main__":
 	main()
 
+#fix player class to be able to shoot, move, have bullets ignore self
+#fix enemy to shoot, target enemy
+#clean entity registry
+#clean enemy spawner
+#fix enemy death

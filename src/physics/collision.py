@@ -45,7 +45,7 @@ class Collider:
 		
 		closest_world_point = p_rectangle._position + (p_rectangle._axisI * closest_point.x) + (p_rectangle._axisJ * closest_point.y) #convert back into the true world space out of this rect origin axis aligned world
 		delta = p_circle._position - closest_world_point #now go to the circle from the closest point on the rect
-		delta_length = delta.lengthSquared() #sqaure distance, use magnitude() for typical ||v|| sizing
+		delta_length = delta.lengthSquared #sqaure distance, use magnitude() for typical ||v|| sizing
 		return (delta_length) < (p_circle._radius * p_circle._radius) #if the dist to circle is < than the circle radius we must be colliding
 
 	@staticmethod # Polygon vs Polygon | Seperating Axis Theorem (SAT)
@@ -65,6 +65,7 @@ class Collider:
 		
 		if p_other in self._ignoreColliders:
 			return False
+	
 		
 		if isinstance(self, CircleCollider) and isinstance(p_other, CircleCollider):
 			return Collider.collideCircleCircle(self, p_other)
@@ -73,7 +74,7 @@ class Collider:
 			return Collider.collideCircleRectangle(self, p_other)
 		
 		if isinstance(self, RectangleCollider) and isinstance(p_other, CircleCollider):
-			return Collider.collideCircleCircle(p_other, self) #swap to make sure its rect upon circle
+			return Collider.collideCircleRectangle(p_other, self) #swap to make sure its rect upon circle
 		
 		if isinstance(self, PolygonCollider) and isinstance(p_other, PolygonCollider):
 			return Collider.collidePolygonPolygon(self, p_other)
@@ -87,9 +88,13 @@ class Collider:
 class CircleCollider(Collider):
 	def __init__(
 		self,
-		p_radius: float
+		p_radius: float,
+		p_ignoreColliders: list[Collider] | None = None
 	):
-		Collider.__init__(self)
+		Collider.__init__(
+			self,
+			p_ignoreColliders = p_ignoreColliders
+		)
 		self._radius: float = p_radius
 	
 	def updateTransform(self, p_transform):
@@ -98,8 +103,14 @@ class CircleCollider(Collider):
 	
 
 class PolygonCollider(Collider):
-	def __init__(self):
-		Collider.__init__(self)
+	def __init__(
+			self,
+			p_ignoreCollides: list[Collider] | None = None
+		):
+		Collider.__init__(
+			self,
+			p_ignoreColliders = p_ignoreCollides
+		)
 		self._rotation = 0.0
 		self._vertices: list[Vec2] = []
 
@@ -122,9 +133,13 @@ class PolygonCollider(Collider):
 class RectangleCollider(PolygonCollider):
 	def __init__(
 		self,
-		p_size: Vec2
+		p_size: Vec2,
+		p_ignoreColliders: list[Collider] | None = None
 	):
-		PolygonCollider.__init__(self)
+		PolygonCollider.__init__(
+			self,
+			p_ignoreCollides = p_ignoreColliders
+		)
 		self._size: Vec2 = p_size
 		self._halfSize: Vec2 = p_size * 0.5
 		self._axisI: Vec2 = Vec2(1.0, 0.0)

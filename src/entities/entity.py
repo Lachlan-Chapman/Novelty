@@ -26,7 +26,7 @@ class Entity:
 		self._renderer: Renderable | None = None
 		self._dirtyGeometry = True
 
-	def _set_id(self, p_id: int) -> None:
+	def setId(self, p_id: int) -> None:
 		if self._id is not None:
 			CONSOLE.warn("Entity ID already set")
 			return
@@ -100,6 +100,10 @@ class Entity:
 	@property
 	def id(self) -> int | None:
 		return self._id
+	
+	@property
+	def alive(self) -> bool:
+		return self._alive
 
 	#DEBUGGING
 	def drawCollision(self) -> None:

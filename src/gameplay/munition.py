@@ -1,3 +1,5 @@
+import math
+
 from core.time import TIME
 from core.window import WINDOW
 from core.vector import Vec2
@@ -39,4 +41,8 @@ class Bullet(Munition):
 		)
 
 	def updateTransform(self, p_transform: Transform) -> None: #the traversal behaviour of our munition
-		p_transform.position += p_transform.position * self._speed * TIME.deltaTime
+		direction = Vec2(
+			math.cos(p_transform.rotation),
+			math.sin(p_transform.rotation)
+		)
+		p_transform.position += direction * self._speed * TIME.deltaTime

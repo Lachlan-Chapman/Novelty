@@ -53,9 +53,11 @@ class Vec2:
 			raise TypeError("Vec2.dot() expected Vec2")
 		return (self.x * p_other.x) + (self.y * p_other.y)
 
+	@property
 	def magnitude(self) -> float:
 		return math.sqrt(self.x * self.x + self.y * self.y)
 	
+	@property
 	def lengthSquared(self) -> float:
 		return self.x * self.x + self.y * self.y
 	
