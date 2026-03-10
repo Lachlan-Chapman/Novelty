@@ -14,6 +14,7 @@ from gameplay.munition import Bullet
 from gameplay.weapon import Weapon
 
 from systems.entity_registry import ENTITY_REGISTRY
+from systems.enemy_spawner import EnemySpawner
 
 def main():
 	player = Player(
@@ -37,6 +38,12 @@ def main():
 	player._armory.addAmmo(Bullet, 100)
 	ENTITY_REGISTRY.add(player)
 
+	enemy_spawner = EnemySpawner(
+		p_target = player,
+		p_spawnSpeed = 5,
+		p_spawnRadius = 500
+	)
+
 	running = True
 	while running:
 		TIME.update() #set delta time and total time
@@ -55,6 +62,7 @@ def main():
 		player.handleInput(keys)
 
 		#Move for AI
+		enemy_spawner.spawnEnemy()
 		ENTITY_REGISTRY.update()
 
 		#Run Collision

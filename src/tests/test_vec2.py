@@ -34,7 +34,7 @@ def test_vec2() -> None:
 	assert a.magnitude == verified_mag
 	assert a.lengthSquared == a.x * a.x + a.y * a.y
 
-	assert a.normalised == Vec2(a.x / verified_mag, a.y / verified_mag)
+	assert a.unit == Vec2(a.x / verified_mag, a.y / verified_mag)
 
 
 

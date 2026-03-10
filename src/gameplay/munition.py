@@ -43,7 +43,7 @@ class Bullet(Munition):
 		Munition.__init__(
 			self,
 			p_radius = 10.0,
-			p_damage = 25.0,
+			p_damage = 100.0,
 			p_speed = 200.0,
 			p_penetrationLimit = 1
 		)

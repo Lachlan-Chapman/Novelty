@@ -69,9 +69,7 @@ class Player(Actor):
 		)
 
 	def handleArmoryInput(self, p_keys: ScancodeWrapper) -> None:
-		if p_keys[pygame.K_SPACE]:
-				print("shoot")
-				self._armory.shoot(p_ignoreColliders = set([self._collider]))
+		if p_keys[pygame.K_SPACE]:				self._armory.shoot(p_ignoreColliders = set([self._collider]))
 
 	def handleInput(self, p_keys: ScancodeWrapper) -> None:
 		#rotation

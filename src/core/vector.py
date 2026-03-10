@@ -70,7 +70,7 @@ class Vec2:
 		return self.x * self.x + self.y * self.y
 	
 	@property
-	def normalised(self) -> "Vec2":
+	def unit(self) -> "Vec2":
 		_magnitude = self.magnitude
 		if _magnitude == 0:
 			return Vec2(0.0, 0.0)
