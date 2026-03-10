@@ -22,7 +22,8 @@ class Entity:
 		self._id: int | None = None #used for collision pairing, ENTITY_REGISTRY sets this so only enetiies registerd will be apart of the actaul game
 		self._alive = True
 
-		self._collider: Collider | None = None
+		self._collider: Collider = Collider()
+		self._collider.canCollide(False)
 		self._renderer: Renderable | None = None
 		self._dirtyGeometry = True
 

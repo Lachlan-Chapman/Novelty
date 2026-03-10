@@ -5,44 +5,52 @@ from core.window import WINDOW
 from core.vector import Vec2
 from core.transform import Transform
 
-from entities.entity import KinematicEntity
-
-class Munition(KinematicEntity):
+class Munition:
 	def __init__(
 		self,
-		p_position: Vec2,
-		p_direction: Vec2,
 		p_radius: float | None = None,
 		p_damage: float | None = None,
 		p_speed: float | None = None,
 		p_penetrationLimit: int | None = None
 	):
-		self._position: Vec2 = p_position
-		self._direction: float = p_direction
 		self._radius: float = p_radius if p_radius is not None else 0.0
 		self._damage: float = p_damage if p_damage is not None else 0.0
 		self._speed: float = p_speed if p_speed is not None else 0.0
 		self._penetrationLimit: int = p_penetrationLimit if p_penetrationLimit is not None else 0
 
-	def updateTransform(self, p_transform: Transform) -> None:
-		pass
+	def traversalBehaviour(self, p_transform: Transform) -> Vec2:
+		return Vec2(0.0, 0.0)
 
+	@property
+	def radius(self) -> float:
+		return self._radius
+	
+	@property
+	def damage(self) -> float:
+		return self._damage
+	
+	@property
+	def speed(self) -> float:
+		return self._speed
+	
+	@property
+	def penetrationLimit(self) -> int:
+		return self._penetrationLimit
 
-#bullet type configuration
+#munition configurations
 class Bullet(Munition):
-	def __init__(self, p_position: Vec2, p_direction: Vec2):
+	def __init__(self):
 		Munition.__init__(
 			self,
-			p_position = p_position,
-			p_direction = p_direction,
-			p_damage = 100.0,
-			p_speed = 50.0,
+			p_radius = 10.0,
+			p_damage = 25.0,
+			p_speed = 200.0,
 			p_penetrationLimit = 1
 		)
 
-	def updateTransform(self, p_transform: Transform) -> None: #the traversal behaviour of our munition
+	def traversalBehaviour(self, p_transform: Transform) -> Vec2: #the traversal behaviour of our munition
 		direction = Vec2(
 			math.cos(p_transform.rotation),
 			math.sin(p_transform.rotation)
 		)
-		p_transform.position += direction * self._speed * TIME.deltaTime
+		return direction * self._speed * TIME.deltaTime

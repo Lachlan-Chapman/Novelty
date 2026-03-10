@@ -3,7 +3,6 @@ import math
 
 from core.window import WINDOW
 from core.vector import Vec2
-from core.utils import toDegrees
 
 class Renderable:
 	def __init__(self):
@@ -25,7 +24,7 @@ class CircleRenderable(Renderable):
 
 	def draw(self, p_position: Vec2, p_theta: float) -> None:
 		pygame.draw.circle(
-			WINDOW._screen,
+			WINDOW.screen,
 			self._color,
 			(int(p_position.x), int(p_position.y)),
 			self._radius
@@ -41,15 +40,15 @@ class RectangleRenderable(Renderable):
 
 	def draw(self, p_position: Vec2, p_theta: float) -> None:
 		surface = pygame.Surface(
-			size = (
+			(
 				int(self._size.x),
 				int(self._size.y)
 			),
-			masks = pygame.SRCALPHA
+			pygame.SRCALPHA
 		)
 		surface.fill(self._color)
 		
-		degrees = toDegrees(-p_theta)
+		degrees = math.degrees(-p_theta)
 		rotated_surface = pygame.transform.rotate(surface, degrees)
 		rotated_rect = rotated_surface.get_rect(
 			center = (
@@ -57,7 +56,7 @@ class RectangleRenderable(Renderable):
 				int(p_position.y)
 			)
 		)
-		WINDOW._screen.blit(
+		WINDOW.screen.blit(
 			source = rotated_surface,
 			dest = rotated_rect
 		)

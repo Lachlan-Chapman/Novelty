@@ -10,36 +10,44 @@ class Vec2:
 		self.y: float = p_y
 	
 	#OPERATOR OVERLOADS
-	def __add__(self, p_other: "Vec2") -> "Vec2" | NotImplementedType:
+	def __add__(self, p_other: "Vec2") -> "Vec2 | NotImplementedType":
 		if not isinstance(p_other, Vec2):
 			return NotImplemented
 		return Vec2(self.x + p_other.x, self.y + p_other.y)
 
-	def __sub__(self, p_other: "Vec2") -> "Vec2" | NotImplementedType:
+	def __sub__(self, p_other: "Vec2") -> "Vec2 | NotImplementedType":
 		if not isinstance(p_other, Vec2):
 			return NotImplemented
 		return Vec2(self.x - p_other.x, self.y - p_other.y)
 	
-	def __mul__(self, p_other: int | float | "Vec2") -> "Vec2" | NotImplementedType:
+	def __mul__(self, p_other: int | float | "Vec2") -> "Vec2 | NotImplementedType":
 		if isinstance(p_other, (int, float)):
 			return Vec2(self.x * p_other, self.y * p_other)
 		if isinstance(p_other, Vec2):
 			return Vec2(self.x * p_other.x, self.y * p_other.y)
 		return NotImplemented
 
-	def __rmul__(self, p_scalar: int | float) -> "Vec2" | NotImplementedType:
+	def __rmul__(self, p_scalar: int | float) -> "Vec2 | NotImplementedType":
 		if not isinstance(p_scalar, (int, float)):
 			return NotImplemented
 		return self.__mul__(p_scalar)
 	
-	def __imul__(self, p_scalar: int | float) -> "Vec2" | NotImplementedType:
+	def __imul__(self, p_scalar: int | float) -> "Vec2 | NotImplementedType":
 		if not isinstance(p_scalar, (int, float)):
 			return NotImplemented
 		self.x *= p_scalar
 		self.y *= p_scalar
 		return self
+	
+	def __truediv__(self, p_other: int | float | "Vec2"):
+		if isinstance(p_other, (int, float)):
+			return Vec2(self.x / p_other, self.y / p_other)
+		if isinstance(p_other, Vec2):
+			return Vec2(self.x / p_other.x, self.y / p_other.y)
+		return NotImplemented
 
-	def __eq__(self, p_other: "Vec2") -> bool | NotImplementedType:
+
+	def __eq__(self, p_other: object) -> bool | NotImplementedType:
 		if not isinstance(p_other, Vec2):
 			return NotImplemented
 		return self.x == p_other.x and self.y == p_other.y
@@ -61,8 +69,9 @@ class Vec2:
 	def lengthSquared(self) -> float:
 		return self.x * self.x + self.y * self.y
 	
-	def normalise(self) -> "Vec2":
-		_magnitude = self.magnitude()
+	@property
+	def normalised(self) -> "Vec2":
+		_magnitude = self.magnitude
 		if _magnitude == 0:
 			return Vec2(0.0, 0.0)
 		return Vec2(self.x / _magnitude, self.y / _magnitude)

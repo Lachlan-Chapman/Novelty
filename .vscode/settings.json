@@ -72,6 +72,7 @@
 	"editor.tabCompletion": "on",
 	"editor.suggest.insertMode": "replace",
 	"editor.wordBasedSuggestions": "off",
+	"python.languageServer": "Pylance",
 
 	"editor.acceptSuggestionOnCommitCharacter": false,
 	"editor.acceptSuggestionOnEnter": "off",

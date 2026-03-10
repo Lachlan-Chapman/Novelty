@@ -10,7 +10,7 @@ class Collider:
 	):
 		self._ignoreColliders: set["Collider"] = p_ignoreColliders if p_ignoreColliders is not None else set()
 		self._position: Vec2 = Vec2(0.0, 0.0)
-		self._canCollide: bool = True
+		self._canCollide: bool = False #this collider is used as a stub collider
 		self._collisionCount: int = 0
 
 
@@ -27,8 +27,11 @@ class Collider:
 			(p_circleA._position.y - p_circleB._position.y)
 		)
 		combined_radius = p_circleA._radius + p_circleB._radius
-		return (delta.x * delta.x + delta.y * delta.y) <= combined_radius * combined_radius
-	
+		collided = (delta.x * delta.x + delta.y * delta.y) <= combined_radius * combined_radius
+		if collided:
+			return collided
+		return False
+
 	@staticmethod #Cricle vs Rectangle | Oriented Bounding Box (OBB)
 	def collideCircleRectangle( p_circle: "CircleCollider", p_rectangle: "RectangleCollider") -> bool: #for circle to rect collision
 		to_circle = p_circle._position - p_rectangle._position; #to circle from rect
@@ -47,7 +50,8 @@ class Collider:
 		delta = p_circle._position - closest_world_point #now go to the circle from the closest point on the rect
 		delta_length = delta.lengthSquared #sqaure distance, use magnitude() for typical ||v|| sizing
 		return (delta_length) < (p_circle._radius * p_circle._radius) #if the dist to circle is < than the circle radius we must be colliding
-
+		
+			
 	@staticmethod # Polygon vs Polygon | Seperating Axis Theorem (SAT)
 	def collidePolygonPolygon(p_polygonA: "PolygonCollider", p_polygonB: "PolygonCollider") -> bool: #for rect to rect collision
 		edge_normals = p_polygonA.edgeNormals + p_polygonB.edgeNormals #combined lists of both shapes local _axes
@@ -63,7 +67,7 @@ class Collider:
 		if not self._canCollide:
 			return False
 		
-		if p_other in self._ignoreColliders:
+		if p_other in self._ignoreColliders or self in p_other._ignoreColliders:
 			return False
 	
 		
@@ -89,13 +93,14 @@ class CircleCollider(Collider):
 	def __init__(
 		self,
 		p_radius: float,
-		p_ignoreColliders: list[Collider] | None = None
+		p_ignoreColliders: set[Collider] | None = None
 	):
 		Collider.__init__(
 			self,
 			p_ignoreColliders = p_ignoreColliders
 		)
 		self._radius: float = p_radius
+		self._canCollide = True
 	
 	def updateTransform(self, p_transform):
 		super().updateTransform(p_transform)
@@ -105,7 +110,7 @@ class CircleCollider(Collider):
 class PolygonCollider(Collider):
 	def __init__(
 			self,
-			p_ignoreCollides: list[Collider] | None = None
+			p_ignoreCollides: set[Collider] | None = None
 		):
 		Collider.__init__(
 			self,
@@ -113,6 +118,7 @@ class PolygonCollider(Collider):
 		)
 		self._rotation = 0.0
 		self._vertices: list[Vec2] = []
+		self._canCollide = True
 
 	def updateTransform(self, p_transform):
 		super().updateTransform(p_transform)
@@ -129,12 +135,16 @@ class PolygonCollider(Collider):
 			if projection > max_projection:
 				max_projection = projection
 		return Vec2(min_projection, max_projection)
+	
+	@property
+	def edgeNormals(self) -> list[Vec2]:
+		return []
 
 class RectangleCollider(PolygonCollider):
 	def __init__(
 		self,
 		p_size: Vec2,
-		p_ignoreColliders: list[Collider] | None = None
+		p_ignoreColliders: set[Collider] | None = None
 	):
 		PolygonCollider.__init__(
 			self,
@@ -175,5 +185,5 @@ class RectangleCollider(PolygonCollider):
 			)
 
 	@property
-	def edgeNormals(self) -> tuple[Vec2, Vec2]:
-		return self._axisI, self._axisJ
+	def edgeNormals(self) -> list[Vec2]:
+		return [self._axisI, self._axisJ]

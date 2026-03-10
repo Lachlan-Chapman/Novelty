@@ -1,5 +1,6 @@
-RAD_TO_DEG: float = 57.29577951308232
-DEG_TO_RAD: float = 0.017453292519943295
+import math
+RAD_TO_DEG: float = 180 / math.pi #57.29577951308232 
+DEG_TO_RAD: float = math.pi / 180 #0.017453292519943295 
 
 def clamp(p_value, p_min: int | float, p_max: int | float) -> int | float:
 	if p_value < p_min:

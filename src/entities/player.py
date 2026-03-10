@@ -19,6 +19,7 @@ from systems.armory import Armory
 class Player(Actor):
 	def __init__(
 		self,
+		p_rototaionSpeed: float,
 		p_health: float,
 		p_damage: float,
 		p_size: Vec2
@@ -31,13 +32,13 @@ class Player(Actor):
 			),
 			p_rotation = 0, #centered at the screen never translates
 			p_velocity = Vec2(0.0, 0.0),
-			p_angularVelocity = 0.0,
+			p_angularVelocity = p_rototaionSpeed, #i know its not true velocity but well fix the physics later
 			p_health = p_health,
 			p_damage = p_damage
 		)
-
-		self._collider: Collider = RectangleCollider(p_size)
-		self._renderer: Renderable = RectangleRenderable(p_size)
+		self._transform.size = p_size
+		self._collider = RectangleCollider(p_size)
+		self._renderer = RectangleRenderable(p_size)
 		
 		direction = Vec2(
 			math.cos(self._transform.rotation),
@@ -45,16 +46,17 @@ class Player(Actor):
 		)
 		self._armory: Armory = Armory(
 			p_maxWeaponCount = 3,
-			p_barrelPosition = self._transform.position + (direction * self._transform.size.magnitude * 1.25),
+			p_barrelPosition = self._transform.position + (direction * self._transform.size.magnitude),
 			p_barrelDirection = direction
 		)
 
 	def handleRotationInput(self, p_keys: ScancodeWrapper) -> None:
 		theta = 0.0
+		
 		if p_keys[pygame.K_a]:
-			theta -= self.m_rotationSpeed
+			theta -= self._angularVelocity
 		if p_keys[pygame.K_d]:
-			theta += self.m_rotationSpeed
+			theta += self._angularVelocity
 		self.offsetRotation(theta * TIME.deltaTime) #adjust to be rotating speed per second
 		
 		direction = Vec2(
@@ -62,13 +64,14 @@ class Player(Actor):
 			math.sin(self._transform.rotation)
 		)
 		self._armory.updateBarrel(
-			p_position = self._transform.position + (direction * self._transform.size.magnitude * 1.25),
+			p_position = self._transform.position + (direction * self._transform.size.magnitude),
 			p_direction = direction
 		)
 
 	def handleArmoryInput(self, p_keys: ScancodeWrapper) -> None:
 		if p_keys[pygame.K_SPACE]:
-			self._armory.shoot(p_ignoreColliders = [self._collider])
+				print("shoot")
+				self._armory.shoot(p_ignoreColliders = set([self._collider]))
 
 	def handleInput(self, p_keys: ScancodeWrapper) -> None:
 		#rotation

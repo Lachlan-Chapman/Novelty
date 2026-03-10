@@ -41,8 +41,11 @@ class EntityRegistry:
 				a.updateGeometry()
 				b.updateGeometry()
 				if a.overlaps(b): #stage just to see if the objects touch
-					pair = (a.id, b.id) #since our loop is already from start of list to latest the ID at the end of the registry is always greater than the previous | dont need sorting
 					#pair = tuple(sorted(a._identity, b._identity)) #using sorting and the set non duplicate method
+					
+					if a.id is None or b.id is None:
+						continue
+					pair = (a.id, b.id) #since our loop is already from start of list to latest the ID at the end of the registry is always greater than the previous | dont need sorting
 					self._currentCollisions.add(pair) #if it already exists it wont duplicate as we used set()
 					a._collider._collisionCount += 1
 					b._collider._collisionCount += 1
@@ -59,9 +62,9 @@ class EntityRegistry:
 		#slower than looping but for now its the easiest option | for small entity count such is this game, its fine
 		self._entities = [entity for entity in self._entities if entity.alive]
 		self._entityCount = len(self._entities)
-		#for entity in self._entities:
-			#if entity._alive is False:
-				#self._entities.remove(entity)
+		# for entity in self._entities:
+		# 	if not entity.alive:
+		# 		self._entities.remove(entity)
 
 	def draw(self):
 		for entity in self._entities:

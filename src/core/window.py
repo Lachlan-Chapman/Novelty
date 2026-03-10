@@ -1,4 +1,5 @@
 import pygame
+from core.console import CONSOLE
 class Window:
 	def __init__(
 		self,
@@ -6,11 +7,14 @@ class Window:
 		p_height: int,
 		p_name: str = "Novelty"
 	):
-		self._width: int = p_width
-		self._height: int = p_height
+		self._scalingOS: float = 1.5
+		self._width: int = int(p_width * self._scalingOS)
+		self._height: int = int(p_height * self._scalingOS)
 		self._name: str = p_name
 
-		self._screen: pygame.Surface = pygame.display.set_mode((p_width, p_height))
+
+		self._screen: pygame.Surface = pygame.display.set_mode((self._width, self._height), pygame.RESIZABLE)
+		CONSOLE.info(f"Game Window Initialized {self._screen.get_size()}")
 		pygame.display.set_caption(p_name)
 
 	@property
@@ -25,8 +29,12 @@ class Window:
 	def name(self) -> str:
 		return self._name
 
+	@property
+	def screen(self) -> pygame.Surface:
+		return self._screen
+
 WINDOW: Window = Window(
-	p_width = 960,
-	p_height = 540,
+	p_width = 1920,
+	p_height = 1080,
 	p_name = "Novelty | Genisis"
 )

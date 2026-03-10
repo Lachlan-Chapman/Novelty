@@ -10,36 +10,36 @@ from core.vector import Vec2
 
 from entities.player import Player
 
-from gameplay.weapon import Weapon
 from gameplay.munition import Bullet
+from gameplay.weapon import Weapon
 
-
-from systems.entity_registry import ENTITY_REGISTRY #the instance of the registry not the class
-from systems.enemy_spawner import EnemySpawner
-
+from systems.entity_registry import ENTITY_REGISTRY
 
 def main():
-	# player = Player(
-	# 	p_health = 500.0,
-	# 	p_damage = 100,
-	# 	p_size = Vec2(20, 20)
-	# )
+	player = Player(
+		p_rototaionSpeed = math.pi,
+		p_health = 500.0,
+		p_damage = 100.0,
+		p_size = Vec2(50, 50)
+	)
 
-	# player._renderer.setColor((255, 255, 255))
-	# player._armory.addWeapon(Weapon(
-	# 	p_munition = Bullet,
-	# 	p_magazineSize = 5,
-	# 	p_reloadSpeed = 2,
-	# 	p_shotCooldown = 1
-	# ))
-	# ENTITY_REGISTRY.add(player)
+	if player._renderer is not None:
+		player._renderer.setColor((255, 0, 0))
 
-
-	
+	player._armory.addWeapon(
+		p_weapon = Weapon(
+			p_munition = Bullet,
+			p_magazineSize = 5,
+			p_shotCooldown = 1,
+			p_reloadSpeed = 2
+		)
+	)
+	player._armory.addAmmo(Bullet, 100)
+	ENTITY_REGISTRY.add(player)
 
 	running = True
 	while running:
-		TIME.update()
+		TIME.update() #set delta time and total time
 
 		#event handling
 		for event in pygame.event.get():
@@ -47,31 +47,31 @@ def main():
 				running = False
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
 				running = False
-		
-		#Gather Inputs
+
 		keys = pygame.key.get_pressed()
-		
-		#Entity Actions
-		#enemy_spawner.spawnEnemy()
-		#ENTITY_REGISTRY.update()
+		if keys[pygame.K_ESCAPE]:
+			running = False
 
-		#User Input
-		#player.handleInput(keys)
+		player.handleInput(keys)
 
-		#Check Collisions
-		#ENTITY_REGISTRY.handleCollision()
+		#Move for AI
+		ENTITY_REGISTRY.update()
+
+		#Run Collision
+		ENTITY_REGISTRY.handleCollision()
 
 		#Clean Up
-		#ENTITY_REGISTRY.removeDead()
-		
+		ENTITY_REGISTRY.removeDead()
+
 		#Render
-		WINDOW._screen.fill((20, 20, 26)) #clears screen with given color
+		WINDOW.screen.fill((20, 20, 20))
 		ENTITY_REGISTRY.draw()
-		pygame.display.flip() #swap graphics buffer to display the render of this loop
-	
+		pygame.display.flip()
 	#Safely Exit
 	pygame.quit()
 	sys.exit(0)
+	
+	
 
 if __name__ == "__main__":
 	main()
