@@ -12,4 +12,5 @@ def vec2_arithmetic() -> None:
 	assert sub_result.y == -2
 
 	mul_result = a * b
-	
+	assert mul_result.x == 3
+	assert mul_result.y == 8
