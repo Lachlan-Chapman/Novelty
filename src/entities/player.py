@@ -126,7 +126,7 @@ PLAYER._armory.addWeapon(
 		p_magazineSize = 5,
 		p_shotCooldown = 1,
 		p_reloadSpeed = 2,
-		p_spreadAngle = math.pi * 2/3,
+		p_spreadAngle = math.pi * 1/3,
 		p_pelletCount = 7
 	)
 )
