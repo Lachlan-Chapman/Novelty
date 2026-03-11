@@ -142,6 +142,10 @@ class Entity:
 	@property
 	def alive(self) -> bool:
 		return self._alive
+	
+	@property
+	def collider(self) -> Collider:
+		return self._collider
 
 	#DEBUGGING
 	def drawCollision(self) -> None:

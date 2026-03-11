@@ -20,7 +20,7 @@ class Vec2:
 			return NotImplemented
 		return Vec2(self.x - p_other.x, self.y - p_other.y)
 	
-	def __mul__(self, p_other: int | float | "Vec2") -> "Vec2 | NotImplementedType":
+	def __mul__(self, p_other: "int | float | Vec2") -> "Vec2 | NotImplementedType":
 		if isinstance(p_other, (int, float)):
 			return Vec2(self.x * p_other, self.y * p_other)
 		if isinstance(p_other, Vec2):
@@ -39,7 +39,7 @@ class Vec2:
 		self.y *= p_scalar
 		return self
 	
-	def __truediv__(self, p_other: int | float | "Vec2"):
+	def __truediv__(self, p_other: "int | float | Vec2"):
 		if isinstance(p_other, (int, float)):
 			return Vec2(self.x / p_other, self.y / p_other)
 		if isinstance(p_other, Vec2):
@@ -75,3 +75,7 @@ class Vec2:
 		if _magnitude == 0:
 			return Vec2(0.0, 0.0)
 		return Vec2(self.x / _magnitude, self.y / _magnitude)
+	
+	@property
+	def copy(self) -> "Vec2":
+		return Vec2(self.x, self.y)

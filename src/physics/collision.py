@@ -13,6 +13,8 @@ class Collider:
 		self._canCollide: bool = False #this collider is used as a stub collider
 		self._collisionCount: int = 0
 
+	def updateIgnoreColliders(self, p_ignoreColliders: set["Collider"]) -> None:
+		self._ignoreColliders = p_ignoreColliders
 
 	def canCollide(self, p_canCollide: bool) -> None:
 		self._canCollide = p_canCollide

@@ -9,7 +9,12 @@ class EntityRegistry:
 		self._currentCollisions: set[tuple[int, int]] = set()
 		self._previousCollisions: set[tuple[int, int]] = set()
 
-	def add(self, p_other: Entity):
+	def add(self, p_other: Entity | list[Entity]) -> None:
+		if isinstance(p_other, list): #adding multiple entities in one sweep
+			for entity in p_other:
+				self.add(entity)
+			return
+
 		if isinstance(p_other, Entity):
 			#register with a unique once only ID
 			p_other.setId(self._entityIdentityCounter)
@@ -20,11 +25,11 @@ class EntityRegistry:
 		else:
 			CONSOLE.warn("entityRegistry.add() was given not Entity type")
 
-	def update(self): #asks all entities to update themseleves for PURELY internal data if they have such logic
+	def update(self) -> None: #asks all entities to update themseleves for PURELY internal data if they have such logic
 		for entity in self._entities:
 			entity.update()
 
-	def handleCollision(self):
+	def handleCollision(self) -> None:
 		for entity in self._entities:
 			entity._collider._collisionCount = 0 #reset collision at the start of each frame
 
@@ -58,7 +63,7 @@ class EntityRegistry:
 		for entity in self._entities: #for debugging
 			entity.drawCollision()
 	
-	def removeDead(self):
+	def removeDead(self) -> None:
 		#slower than looping but for now its the easiest option | for small entity count such is this game, its fine
 		self._entities = [entity for entity in self._entities if entity.alive]
 		self._entityCount = len(self._entities)
@@ -66,7 +71,7 @@ class EntityRegistry:
 		# 	if not entity.alive:
 		# 		self._entities.remove(entity)
 
-	def draw(self):
+	def draw(self) -> None:
 		for entity in self._entities:
 			entity.draw()
 			  

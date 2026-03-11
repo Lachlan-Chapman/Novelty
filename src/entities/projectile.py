@@ -7,7 +7,7 @@ from physics.collision import Collider, CircleCollider
 from render.renderable import CircleRenderable
 
 from entities.entity import Entity, Actor
-from gameplay.munition import Munition, Bullet, Missile
+from gameplay.munition import Munition, Bullet, Missile, Pellet
 
 #wrapper around munition children types into a fluid entity type
 class Projectile(Actor):
@@ -17,12 +17,11 @@ class Projectile(Actor):
 		p_position: Vec2,
 		p_rotation: float | None = None,
 		p_direction: Vec2 | None = None,
-		p_ignoreColliders: set[Collider] | None = None
+		p_ignoreColliders: set[Collider] | None = None,
 	):
-		theta = math.atan2(p_direction.y, p_direction.x)
 		Actor.__init__(
 			self,
-			p_position = p_position,
+			p_position = p_position.copy,
 			p_rotation = p_rotation,
 			p_direction = p_direction,
 			p_speed = p_munition.speed,
@@ -58,11 +57,12 @@ class BulletProjectile(Projectile):
 		p_position: Vec2,
 		p_rotation: float | None = None,
 		p_direction: Vec2 | None = None,
-		p_ignoreColliders: set[Collider] | None = None
+		p_ignoreColliders: set[Collider] | None = None,
+		p_munition: Munition = Bullet()
 	):
 		Projectile.__init__(
 			self,
-			p_munition = Bullet(),
+			p_munition = p_munition,
 			p_position = p_position,
 			p_rotation = p_rotation,
 			p_direction = p_direction,
@@ -80,11 +80,12 @@ class MisslieProjectile(Projectile):
 		p_position: Vec2,
 		p_rotation: float | None = None,
 		p_direction: Vec2 | None = None,
-		p_ignoreColliders: set[Collider] | None = None
+		p_ignoreColliders: set[Collider] | None = None,
+		p_munition: Munition = Missile()
 	):
 		Projectile.__init__(
 			self,
-			p_munition = Missile(),
+			p_munition = p_munition,
 			p_position = p_position,
 			p_rotation = p_rotation,
 			p_direction = p_direction,
@@ -101,3 +102,20 @@ class MisslieProjectile(Projectile):
 		self.offsetPosition(self._direction * self._speed * TIME.deltaTime) #move toward the target
 		super().update()
 
+class PelletProjectile(BulletProjectile):
+	def __init__(
+		self,
+		p_position: Vec2,
+		p_rotation: float | None = None,
+		p_direction: Vec2 | None = None,
+		p_ignoreColliders: set[Collider] | None = None,
+		p_munition: Munition = Pellet()
+	):
+		BulletProjectile.__init__(
+			self,
+			p_position = p_position,
+			p_rotation = p_rotation,
+			p_direction = p_direction,
+			p_ignoreColliders = p_ignoreColliders,
+			p_munition = p_munition
+		)

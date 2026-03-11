@@ -85,7 +85,7 @@ class Armory:
 					self._ammo[weapon.munition] -= weapon._magazineSize
 					weapon.reload()
 			
-			ENTITY_REGISTRY.add(projectile) #register to bullet/missile made
+			ENTITY_REGISTRY.add(projectile) #register to (bullet/missile/pellet)(s) made
 
 	#GETTERS
 	@property

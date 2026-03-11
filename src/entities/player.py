@@ -13,8 +13,8 @@ from core.window import WINDOW
 from physics.collision import RectangleCollider
 from render.renderable import RectangleRenderable
 
-from gameplay.munition import Bullet, Missile
-from gameplay.weapon import Weapon, MissileLauncher
+from gameplay.munition import Bullet, Missile, Pellet
+from gameplay.weapon import Weapon, MissileLauncher, Shotgun
 
 
 from systems.armory import Armory
@@ -104,7 +104,6 @@ if PLAYER._renderer is not None:
 
 # player._armory.addWeapon(
 # 	p_weapon = Weapon(
-# 		p_munition = Bullet,
 # 		p_magazineSize = 5,
 # 		p_shotCooldown = 1,
 # 		p_reloadSpeed = 2
@@ -112,16 +111,26 @@ if PLAYER._renderer is not None:
 # )
 # player._armory.addAmmo(Bullet, 100)
 
+# PLAYER._armory.addWeapon(
+# 	p_weapon = MissileLauncher(
+# 		p_magazineSize = 5,
+# 		p_shotCooldown = 1,
+# 		p_reloadSpeed = 2,
+# 		p_targetFOV = math.pi/2
+# 	)
+# )
+# PLAYER._armory.addAmmo(Missile, 100)
+
 PLAYER._armory.addWeapon(
-	p_weapon = MissileLauncher(
-		p_munition = Missile,
+	p_weapon = Shotgun(
 		p_magazineSize = 5,
 		p_shotCooldown = 1,
 		p_reloadSpeed = 2,
-		p_targetFOV = math.pi/2
+		p_spreadAngle = math.pi * 2/3,
+		p_pelletCount = 7
 	)
 )
-PLAYER._armory.addAmmo(Missile, 100)
+PLAYER._armory.addAmmo(Pellet, 100)
 ENTITY_REGISTRY.add(PLAYER)
 
 

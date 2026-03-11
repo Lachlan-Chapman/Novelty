@@ -1,4 +1,5 @@
 import math
+from core.utils import randomRange
 from core.time import TIME
 from core.vector import Vec2
 from physics.collision import Collider
@@ -6,9 +7,9 @@ from render.renderable import LineRenderable
 
 from entities.entity import Entity
 from entities.enemy import Enemy
-from entities.projectile import Projectile, BulletProjectile, MisslieProjectile
+from entities.projectile import Projectile, BulletProjectile, MisslieProjectile, PelletProjectile
 
-from gameplay.munition import Munition, Bullet, Missile
+from gameplay.munition import Munition, Bullet, Missile, Pellet
 from systems.entity_registry import ENTITY_REGISTRY
 
 
@@ -55,9 +56,8 @@ class Weapon:
 			and self._bulletCount > 0
 		)
 	
-	def createProjectile(self, p_barrel: Entity, p_ignoreColliders: list[Collider]) -> Projectile:
+	def createProjectile(self, p_barrel: Entity, p_ignoreColliders: list[Collider]) -> list[Projectile]:
 		pass
-
 
 	def shoot(self, p_barrel: Entity, p_friendlies: list[Collider]) -> Projectile | None:
 		if not self.canShoot():
@@ -132,12 +132,12 @@ class Pistol(Weapon):
 					target = enemy
 		return target
 	
-	def createProjectile(self, p_barrel: Entity, p_ignoreColliders: list[Collider]) -> Projectile:
-		return BulletProjectile(
+	def createProjectile(self, p_barrel: Entity, p_ignoreColliders: list[Collider]) -> list[Projectile]:
+		return [BulletProjectile(
 			p_position = p_barrel.position,
 			p_direction = p_barrel.direction,
 			p_ignoreColliders = p_ignoreColliders
-		)
+		)]
 
 	def shoot(self, p_barrel: Entity, p_friendlies: list[Collider]) -> Projectile | None:
 		return super().shoot(
@@ -145,15 +145,9 @@ class Pistol(Weapon):
 			p_friendlies = p_friendlies
 		)
 
-
-
-#missile launcher finds target
-#creates the missile projectile with targeting
-#uses the missile munition config to control the targeting behaviour
 class MissileLauncher(Weapon):
 	def __init__(
 		self,
-		p_munition: type[Munition],
 		p_magazineSize: int,
 		p_shotCooldown: float,
 		p_reloadSpeed: float,
@@ -161,7 +155,7 @@ class MissileLauncher(Weapon):
 	):
 		Weapon.__init__(
 			self,
-			p_munition = p_munition,
+			p_munition = Missile,
 			p_magazineSize = p_magazineSize,
 			p_shotCooldown = p_shotCooldown,
 			p_reloadSpeed = p_reloadSpeed
@@ -185,18 +179,75 @@ class MissileLauncher(Weapon):
 					target = enemy
 		return target
 	
-	def createProjectile(self, p_barrel, p_ignoreColliders) -> Projectile:
-		return MisslieProjectile(
+	def createProjectile(self, p_barrel, p_ignoreColliders) -> list[Projectile]:
+		return [MisslieProjectile(
 			p_target = self.findTarget(p_barrel),
 			p_position = p_barrel.position,
 			p_rotation = p_barrel.rotation,
 			p_direction = p_barrel.direction,
 			p_ignoreColliders = p_ignoreColliders
-		)
+		)]
 	
 	def debugDraw(self, p_barrel: Entity) -> None:
 		super().debugDraw(p_barrel)
 		half_theta = self._targetFOV / 2
+		left_theta = p_barrel.rotation - half_theta
+		right_theta = p_barrel.rotation + half_theta
+		self._debugRenderable.draw(p_barrel.position, left_theta)
+		self._debugRenderable.draw(p_barrel.position, right_theta)
+		
+	
+	def shoot(self, p_barrel: Entity, p_friendlies: list[Collider]) -> Projectile | None:
+		return super().shoot(
+			p_barrel = p_barrel,
+			p_friendlies = p_friendlies
+		)
+
+class Shotgun(Weapon):
+	def __init__(
+		self,
+		p_magazineSize: int,
+		p_shotCooldown: float,
+		p_reloadSpeed: float,
+		p_spreadAngle: float,
+		p_pelletCount: int
+	):
+		Weapon.__init__(
+			self,
+			p_munition = Pellet,
+			p_magazineSize = p_magazineSize,
+			p_shotCooldown = p_shotCooldown,
+			p_reloadSpeed = p_reloadSpeed
+		)
+		self._spreadAngle = p_spreadAngle
+		self._pelletCount = p_pelletCount
+
+	def createProjectile(self, p_barrel, p_ignoreColliders) -> list[Projectile]:
+		pellets = []
+		half_theta = self._spreadAngle / 2
+		
+		ignore_pellets = set(p_ignoreColliders) if p_ignoreColliders is not None else set()
+		for _i in range(self._pelletCount):
+			theta = randomRange(
+				p_min = p_barrel.rotation - half_theta,
+				p_max = p_barrel.rotation + half_theta
+			)
+			direction = Vec2(math.cos(theta), math.sin(theta))
+			pellet = PelletProjectile(
+				p_position = p_barrel.position,
+				p_rotation = None,
+				p_direction = direction,
+				p_ignoreColliders = ignore_pellets
+			)
+			ignore_pellets.add(pellet.collider)
+			pellets.append(
+				pellet
+			)
+		return pellets
+	
+	def debugDraw(self, p_barrel: Entity) -> None:
+		super().debugDraw(p_barrel)
+		half_theta = self._spreadAngle / 2
 		left_theta = p_barrel.rotation - half_theta
 		right_theta = p_barrel.rotation + half_theta
 		self._debugRenderable.draw(p_barrel.position, left_theta)
