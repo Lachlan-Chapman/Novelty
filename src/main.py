@@ -67,6 +67,7 @@ def main():
 
 		#Render
 		WINDOW.screen.fill((20, 20, 20))
+		PLAYER._armory.debugDraw()
 		ENTITY_REGISTRY.draw()
 		pygame.display.flip()
 	#Safely Exit

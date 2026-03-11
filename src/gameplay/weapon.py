@@ -1,7 +1,8 @@
 import math
 from core.time import TIME
-
+from core.vector import Vec2
 from physics.collision import Collider
+from render.renderable import LineRenderable
 
 from entities.entity import Entity
 from entities.enemy import Enemy
@@ -35,6 +36,11 @@ class Weapon:
 		self._reloadFinish: float = 0.0
 		self._shotFinish: float = 0.0
 
+		self._debugRenderable = LineRenderable(
+			p_magnitude = 200.0,
+			p_width = 2.0
+		)
+
 	def reload(self) -> None:
 		self._isReloading = True
 		self._reloadFinish = TIME.time + self._reloadSpeed
@@ -65,6 +71,9 @@ class Weapon:
 			p_barrel = p_barrel,
 			p_ignoreColliders = p_friendlies
 		)
+
+	def debugDraw(self, p_barrel: Entity) -> None:
+		self._debugRenderable.draw(p_barrel.position, p_barrel.rotation)
 
 	#GETTERS to return currently tracked state
 	@property
@@ -159,6 +168,7 @@ class MissileLauncher(Weapon):
 		)
 		self._targetFOV = p_targetFOV
 
+
 	def findTarget(self, p_barrel: Entity) -> Projectile | None:
 		target: Enemy | None = None
 		
@@ -175,7 +185,7 @@ class MissileLauncher(Weapon):
 					target = enemy
 		return target
 	
-	def createProjectile(self, p_barrel, p_ignoreColliders):
+	def createProjectile(self, p_barrel, p_ignoreColliders) -> Projectile:
 		return MisslieProjectile(
 			p_target = self.findTarget(p_barrel),
 			p_position = p_barrel.position,
@@ -183,7 +193,16 @@ class MissileLauncher(Weapon):
 			p_direction = p_barrel.direction,
 			p_ignoreColliders = p_ignoreColliders
 		)
-
+	
+	def debugDraw(self, p_barrel: Entity) -> None:
+		super().debugDraw(p_barrel)
+		half_theta = self._targetFOV / 2
+		left_theta = p_barrel.rotation - half_theta
+		right_theta = p_barrel.rotation + half_theta
+		self._debugRenderable.draw(p_barrel.position, left_theta)
+		self._debugRenderable.draw(p_barrel.position, right_theta)
+		
+	
 	def shoot(self, p_barrel: Entity, p_friendlies: list[Collider]) -> Projectile | None:
 		return super().shoot(
 			p_barrel = p_barrel,

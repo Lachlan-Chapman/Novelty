@@ -40,11 +40,19 @@ class Armory:
 		self._currentWeapon: int = 0
 		self._ammo: dict[type[Munition], int] = {}
 
+
+
 	#UPDATE BARREL LOCATION
 	def updateBarrel(self, p_position: Vec2, p_direction: Vec2):
 		self._barrel.setPosition(p_position)
 		self._barrel.setDirection(p_direction)
 		self._barrel.draw()
+
+	def debugDraw(self) -> None:
+		weapon = self._weapons[self._currentWeapon]
+		if weapon is not None:
+			weapon.debugDraw(self._barrel)
+
 
 	#UPDATE STORE
 	def addAmmo(self, p_munition: type[Munition], p_amount: int) -> None:

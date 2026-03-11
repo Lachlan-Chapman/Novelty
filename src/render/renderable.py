@@ -60,3 +60,24 @@ class RectangleRenderable(Renderable):
 			source = rotated_surface,
 			dest = rotated_rect
 		)
+
+class LineRenderable(Renderable):
+	def __init__(
+		self,
+		p_magnitude: float | None = None,
+		p_width: float | None = None
+	):
+		Renderable.__init__(self)
+		self._magnitude = p_magnitude if p_magnitude is not None else 100.0
+		self._width = p_width if p_width is not None else 2
+
+	def draw(self, p_position: Vec2, p_theta: float) -> None:
+		direction = Vec2(math.cos(p_theta), math.sin(p_theta))
+		end = p_position + (direction * self._magnitude)
+		pygame.draw.line(
+			WINDOW.screen,
+			self._color,
+			(int(p_position.x), int(p_position.y)),
+			(int(end.x), int(end.y)),
+			int(self._width)
+		)
