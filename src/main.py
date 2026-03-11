@@ -6,43 +6,37 @@ pygame.init() #immediatly initialize before ANY OTHER object creation
 
 from core.window import WINDOW
 from core.time import TIME
+from systems.entity_registry import ENTITY_REGISTRY
+
 from core.vector import Vec2
 
-from entities.player import Player
+from entities.enemy import Enemy
+from entities.player import PLAYER
 
-from gameplay.munition import Bullet
-from gameplay.weapon import Weapon
+from gameplay.munition import Bullet, Missile
+from gameplay.weapon import Weapon, MissileLauncher
 
-from systems.entity_registry import ENTITY_REGISTRY
 from systems.enemy_spawner import EnemySpawner
 
 def main():
-	player = Player(
-		p_rotationSpeed = math.pi,
-		p_health = 500.0,
-		p_damage = 100.0,
-		p_size = Vec2(WINDOW.width / 25, WINDOW.width / 25)
-	)
-
-	if player._renderer is not None:
-		player._renderer.setColor((255, 0, 0))
-
-	player._armory.addWeapon(
-		p_weapon = Weapon(
-			p_munition = Bullet,
-			p_magazineSize = 5,
-			p_shotCooldown = 1,
-			p_reloadSpeed = 2
-		)
-	)
-	player._armory.addAmmo(Bullet, 100)
-	ENTITY_REGISTRY.add(player)
 
 	enemy_spawner = EnemySpawner(
-		p_target = player,
+		p_target = PLAYER,
 		p_spawnSpeed = 5,
 		p_spawnRadius = WINDOW.width * 0.5
 	)
+
+	test_enemy = Enemy(
+		p_position = Vec2(
+			PLAYER.position.x + 350,
+			PLAYER.position.y
+		),
+		p_radius = 20,
+		p_speed = 0.0,
+		p_health = 100.0,
+		p_damage = 0
+	)
+	#ENTITY_REGISTRY.add(test_enemy)
 
 	running = True
 	while running:
@@ -59,7 +53,7 @@ def main():
 		if keys[pygame.K_ESCAPE]:
 			running = False
 
-		player.handleInput(keys)
+		PLAYER.handleInput(keys)
 
 		#Move for AI
 		enemy_spawner.spawnEnemy()
@@ -84,7 +78,7 @@ def main():
 if __name__ == "__main__":
 	main()
 
-#fix player class to be able to shoot, move, have bullets ignore self
+#fix PLAYER class to be able to shoot, move, have bullets ignore self
 #fix enemy to shoot, target enemy
 #clean entity registry
 #clean enemy spawner

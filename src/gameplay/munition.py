@@ -48,9 +48,13 @@ class Bullet(Munition):
 			p_penetrationLimit = 1
 		)
 
-	def traversalBehaviour(self, p_transform: Transform) -> Vec2: #the traversal behaviour of our munition
-		direction = Vec2(
-			math.cos(p_transform.rotation),
-			math.sin(p_transform.rotation)
+
+class Missile(Munition):
+	def __init__(self):
+		Munition.__init__(
+			self,
+			p_radius = 7.5,
+			p_damage = 50.0,
+			p_speed = 450.0,
+			p_penetrationLimit = 1
 		)
-		return direction * self._speed * TIME.deltaTime

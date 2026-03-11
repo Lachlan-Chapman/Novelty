@@ -7,7 +7,7 @@ from physics.collision import Collider, CircleCollider
 from render.renderable import CircleRenderable
 
 from entities.entity import Entity, Actor
-from gameplay.munition import Munition
+from gameplay.munition import Munition, Bullet, Missile
 
 #wrapper around munition children types into a fluid entity type
 class Projectile(Actor):
@@ -25,25 +25,22 @@ class Projectile(Actor):
 			p_position = p_position,
 			p_rotation = p_rotation,
 			p_direction = p_direction,
-			p_speed = p_munition._speed,
-			p_health = p_munition._penetrationLimit,
-			p_damage = p_munition._damage
+			p_speed = p_munition.speed,
+			p_health = p_munition.penetrationLimit,
+			p_damage = p_munition.damage
 		)
-		self._transform.size = Vec2(p_munition._radius, p_munition._radius)
+		self._transform.size = Vec2(p_munition.radius, p_munition.radius)
 
 		self._collider = CircleCollider(
-			p_radius = p_munition._radius,
+			p_radius = p_munition.radius,
 			p_ignoreColliders = p_ignoreColliders
 		)
 
-		self._renderer = CircleRenderable(p_munition._radius)
-
-		self._traversalBehaviour = p_munition.traversalBehaviour
+		self._renderer = CircleRenderable(p_munition.radius)
 		
-
 	def update(self) -> None: #travel along the initial direction
-		self.offsetPosition(self._traversalBehaviour(self._transform)) #use the bound munitions instance to update the bullet
-		
+		super().update()
+
 		#then the entity itself handles if its in a valid spot etc
 		if self._transform.position.x <= 0 or self._transform.position.x >= WINDOW.width:
 			self.malive = False
@@ -54,3 +51,53 @@ class Projectile(Actor):
 		if isinstance(p_other, Actor):
 			p_other.applyDamage(self._damage)
 			self.applyDamage(1) #removes one from the amount of times it can collide again
+
+class BulletProjectile(Projectile):
+	def __init__(
+		self,
+		p_position: Vec2,
+		p_rotation: float | None = None,
+		p_direction: Vec2 | None = None,
+		p_ignoreColliders: set[Collider] | None = None
+	):
+		Projectile.__init__(
+			self,
+			p_munition = Bullet(),
+			p_position = p_position,
+			p_rotation = p_rotation,
+			p_direction = p_direction,
+			p_ignoreColliders = p_ignoreColliders
+		)
+
+	def updatePosition(self): #straight line bullet behaviour by default
+		self.offsetPosition(self._direction * self._speed * TIME.deltaTime)
+
+
+class MisslieProjectile(Projectile):
+	def __init__(
+		self,
+		p_target: Entity,
+		p_position: Vec2,
+		p_rotation: float | None = None,
+		p_direction: Vec2 | None = None,
+		p_ignoreColliders: set[Collider] | None = None
+	):
+		Projectile.__init__(
+			self,
+			p_munition = Missile(),
+			p_position = p_position,
+			p_rotation = p_rotation,
+			p_direction = p_direction,
+			p_ignoreColliders = p_ignoreColliders
+		)
+		self._target: Entity = p_target
+
+	def update(self) -> None:
+		if self._target is not None and not self._target.alive:
+			self._target = None #free the reference should prevent memory leaks and turn missile to dumb fire
+		
+		self.lookAt(self._target) #set rotation and direction toward the target
+		
+		self.offsetPosition(self._direction * self._speed * TIME.deltaTime) #move toward the target
+		super().update()
+

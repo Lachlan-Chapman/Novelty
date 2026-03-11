@@ -42,8 +42,8 @@ class Armory:
 
 	#UPDATE BARREL LOCATION
 	def updateBarrel(self, p_position: Vec2, p_direction: Vec2):
-		self._barrel._transform.position = p_position
-		self._barrel._transform.rotation = math.atan2(p_direction.y, p_direction.x)
+		self._barrel.setPosition(p_position)
+		self._barrel.setDirection(p_direction)
 		self._barrel.draw()
 
 	#UPDATE STORE
@@ -70,21 +70,14 @@ class Armory:
 			return
 
 		weapon = self._weapons[self._currentWeapon]
-		if weapon.shoot(): #attemp shoot | if true, the weapon has shot and updated internall state
-			position = Vec2(self._barrel.position.x, self._barrel.position.y)
-			direction = Vec2(math.cos(self._barrel.rotation), math.sin(self._barrel.rotation))
-			projectile = Projectile(
-				p_position = position,
-				p_direction = direction,
-				p_munition = weapon.munition(), #config of the projectile
-				p_ignoreColliders = p_ignoreColliders
-			)
-			ENTITY_REGISTRY.add(projectile)
-		
-		if weapon.requestingReload and not weapon.reloading: #has the weapon exhasuted its magazine
-			if self._ammo.get(weapon.munition, 0) > 0:  #do we have ammo in the armory to reload the gun with?
-				self._ammo[weapon.munition] -= weapon._magazineSize
-				weapon.reload()
+		projectile = weapon.shoot(self._barrel, p_ignoreColliders) #will have the new projectile made if it did shoot
+		if projectile is not None:
+			if weapon.requestingReload and not weapon.reloading: #has the weapon exhasuted its magazine
+				if self._ammo.get(weapon.munition, 0) > 0:  #do we have ammo in the armory to reload the gun with?
+					self._ammo[weapon.munition] -= weapon._magazineSize
+					weapon.reload()
+			
+			ENTITY_REGISTRY.add(projectile) #register to bullet/missile made
 
 	#GETTERS
 	@property

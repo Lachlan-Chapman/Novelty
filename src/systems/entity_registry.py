@@ -68,6 +68,10 @@ class EntityRegistry:
 
 	def draw(self):
 		for entity in self._entities:
-  			entity.draw()
+			entity.draw()
+			  
+	def getEntities(self, p_entityType: type[Entity]) -> list[Entity]:
+		return [entity for entity in self._entities if type(entity) == p_entityType]
+
 
 ENTITY_REGISTRY = EntityRegistry()

@@ -6,15 +6,20 @@ from core.vector import Vec2
 
 
 from entities.entity import Entity, Actor
-from gameplay.weapon import Weapon
 
 from core.time import TIME
 from core.window import WINDOW
 
-from physics.collision import Collider, RectangleCollider
-from render.renderable import Renderable, RectangleRenderable
+from physics.collision import RectangleCollider
+from render.renderable import RectangleRenderable
+
+from gameplay.munition import Bullet, Missile
+from gameplay.weapon import Weapon, MissileLauncher
+
 
 from systems.armory import Armory
+from systems.entity_registry import ENTITY_REGISTRY
+
 
 class Player(Actor):
 	def __init__(
@@ -75,6 +80,7 @@ class Player(Actor):
 	def handleArmoryInput(self, p_keys: ScancodeWrapper) -> None:
 		if p_keys[pygame.K_SPACE]:
 			self._armory.shoot(p_ignoreColliders = set([self._collider]))
+			
 
 	def handleInput(self, p_keys: ScancodeWrapper) -> None:
 		#rotation
@@ -85,6 +91,38 @@ class Player(Actor):
 	def draw(self):
 		super().draw()
 		self._armory._barrel.draw() #player has to handle the visual representation of the barrel
+
+PLAYER = Player(
+	p_rotationSpeed = math.pi,
+	p_health = 500.0,
+	p_damage = 100.0,
+	p_size = Vec2(WINDOW.width / 25, WINDOW.width / 25)
+)
+
+if PLAYER._renderer is not None:
+	PLAYER._renderer.setColor((255, 0, 0))
+
+# player._armory.addWeapon(
+# 	p_weapon = Weapon(
+# 		p_munition = Bullet,
+# 		p_magazineSize = 5,
+# 		p_shotCooldown = 1,
+# 		p_reloadSpeed = 2
+# 	)
+# )
+# player._armory.addAmmo(Bullet, 100)
+
+PLAYER._armory.addWeapon(
+	p_weapon = MissileLauncher(
+		p_munition = Missile,
+		p_magazineSize = 5,
+		p_shotCooldown = 1,
+		p_reloadSpeed = 2,
+		p_targetFOV = math.pi/2
+	)
+)
+PLAYER._armory.addAmmo(Missile, 100)
+ENTITY_REGISTRY.add(PLAYER)
 
 
 

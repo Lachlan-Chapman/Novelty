@@ -7,8 +7,6 @@ from render.renderable import CircleRenderable
 
 from entities.entity import Entity, Actor
 
-from gameplay.weapon import Weapon
-
 class Enemy(Actor):
 	def __init__(
 		self,
