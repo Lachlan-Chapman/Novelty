@@ -105,6 +105,10 @@ class CircleCollider(Collider):
 	def updateTransform(self, p_transform):
 		super().updateTransform(p_transform)
 		self._radius = p_transform.size.x
+
+	@property
+	def radius(self):
+		return self._radius
 	
 
 class PolygonCollider(Collider):

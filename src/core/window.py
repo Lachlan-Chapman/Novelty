@@ -7,7 +7,7 @@ class Window:
 		p_height: int,
 		p_name: str = "Novelty"
 	):
-		self._scalingOS: float = 1.5
+		self._scalingOS: float = 1
 		self._width: int = int(p_width * self._scalingOS)
 		self._height: int = int(p_height * self._scalingOS)
 		self._name: str = p_name
@@ -33,8 +33,9 @@ class Window:
 	def screen(self) -> pygame.Surface:
 		return self._screen
 
+screen_size = pygame.display.Info()
 WINDOW: Window = Window(
-	p_width = 1920,
-	p_height = 1080,
+	p_width = screen_size.current_w // 1.5,
+	p_height = screen_size.current_h // 1.5,
 	p_name = "Novelty | Genisis"
 )

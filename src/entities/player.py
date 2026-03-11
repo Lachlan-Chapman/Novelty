@@ -19,7 +19,7 @@ from systems.armory import Armory
 class Player(Actor):
 	def __init__(
 		self,
-		p_rototaionSpeed: float,
+		p_rotationSpeed: float,
 		p_health: float,
 		p_damage: float,
 		p_size: Vec2
@@ -30,14 +30,14 @@ class Player(Actor):
 				WINDOW.width // 2,
 				WINDOW.height // 2
 			),
-			p_rotation = 0, #centered at the screen never translates
-			p_velocity = Vec2(0.0, 0.0),
-			p_angularVelocity = p_rototaionSpeed, #i know its not true velocity but well fix the physics later
+			p_rotation = 0.0, #centered at the screen never translates
+			p_speed = p_rotationSpeed,
 			p_health = p_health,
 			p_damage = p_damage
 		)
 		self._transform.size = p_size
 		self._collider = RectangleCollider(p_size)
+
 		self._renderer = RectangleRenderable(p_size)
 		
 		direction = Vec2(
@@ -50,13 +50,17 @@ class Player(Actor):
 			p_barrelDirection = direction
 		)
 
+	def onCollisionEnter(self, p_other: Entity):
+		if isinstance(p_other, Actor):
+			p_other.applyDamage(p_other.damage)
+
 	def handleRotationInput(self, p_keys: ScancodeWrapper) -> None:
 		theta = 0.0
 		
 		if p_keys[pygame.K_a]:
-			theta -= self._angularVelocity
+			theta -= self._speed
 		if p_keys[pygame.K_d]:
-			theta += self._angularVelocity
+			theta += self._speed
 		self.offsetRotation(theta * TIME.deltaTime) #adjust to be rotating speed per second
 		
 		direction = Vec2(
@@ -69,7 +73,8 @@ class Player(Actor):
 		)
 
 	def handleArmoryInput(self, p_keys: ScancodeWrapper) -> None:
-		if p_keys[pygame.K_SPACE]:				self._armory.shoot(p_ignoreColliders = set([self._collider]))
+		if p_keys[pygame.K_SPACE]:
+			self._armory.shoot(p_ignoreColliders = set([self._collider]))
 
 	def handleInput(self, p_keys: ScancodeWrapper) -> None:
 		#rotation

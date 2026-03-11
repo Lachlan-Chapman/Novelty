@@ -13,6 +13,9 @@ class Enemy(Actor):
 	def __init__(
 		self,
 		p_position: Vec2,
+		p_rotation: float | None = None,
+		p_direction: float | None = None,
+		*,
 		p_radius: float,
 		p_speed: float,
 		p_health: float,
@@ -27,16 +30,20 @@ class Enemy(Actor):
 		Actor.__init__(
 			self,
 			p_position = p_position,
-			p_rotation = rotation,
-			p_velocity = None,
-			p_angularVelocity = None,
+			p_rotation = p_rotation,
+			p_direction = p_direction,
+			p_speed = p_speed,
 			p_health = p_health,
 			p_damage = p_damage
 		)
-		self._transform.size = Vec2(30, 30)
+		self._transform.size = Vec2(p_radius, p_radius)
+		self._collider = CircleCollider(p_radius)
+		self._renderer = CircleRenderable(p_radius)
 		self._speed: float = p_speed
-		self._collider = CircleCollider(30)
-		self._renderer = CircleRenderable(30)
+
+	def onCollisionEnter(self, p_other: Entity):
+		if isinstance(p_other, Actor):
+			p_other.applyDamage(self._damage)
 
 	def updatePosition(self) -> None:
 		if self._target is not None:
@@ -53,3 +60,6 @@ class Enemy(Actor):
 			return Vec2(0.0, 0.0)
 		return (self._target._transform.position - p_target._transform.position).unit
 
+	@property
+	def radius(self):
+		return self._transform.size

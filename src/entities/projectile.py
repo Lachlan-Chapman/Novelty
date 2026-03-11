@@ -13,24 +13,23 @@ from gameplay.munition import Munition
 class Projectile(Actor):
 	def __init__(
 		self,
-		p_position: Vec2,
-		p_direction: Vec2,
 		p_munition: Munition,
+		p_position: Vec2,
+		p_rotation: float | None = None,
+		p_direction: Vec2 | None = None,
 		p_ignoreColliders: set[Collider] | None = None
 	):
 		theta = math.atan2(p_direction.y, p_direction.x)
 		Actor.__init__(
 			self,
 			p_position = p_position,
-			p_rotation = theta,
-			p_velocity = Vec2(math.cos(theta) * p_munition.speed, math.sin(theta) * p_munition.speed),
-			p_angularVelocity = 0.0,
+			p_rotation = p_rotation,
+			p_direction = p_direction,
+			p_speed = p_munition._speed,
 			p_health = p_munition._penetrationLimit,
 			p_damage = p_munition._damage
 		)
 		self._transform.size = Vec2(p_munition._radius, p_munition._radius)
-
-		self._traversalBehaviour = p_munition.traversalBehaviour
 
 		self._collider = CircleCollider(
 			p_radius = p_munition._radius,
@@ -38,6 +37,8 @@ class Projectile(Actor):
 		)
 
 		self._renderer = CircleRenderable(p_munition._radius)
+
+		self._traversalBehaviour = p_munition.traversalBehaviour
 		
 
 	def update(self) -> None: #travel along the initial direction

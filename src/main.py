@@ -18,10 +18,10 @@ from systems.enemy_spawner import EnemySpawner
 
 def main():
 	player = Player(
-		p_rototaionSpeed = math.pi,
+		p_rotationSpeed = math.pi,
 		p_health = 500.0,
 		p_damage = 100.0,
-		p_size = Vec2(50, 50)
+		p_size = Vec2(WINDOW.width / 25, WINDOW.width / 25)
 	)
 
 	if player._renderer is not None:
@@ -41,7 +41,7 @@ def main():
 	enemy_spawner = EnemySpawner(
 		p_target = player,
 		p_spawnSpeed = 5,
-		p_spawnRadius = 500
+		p_spawnRadius = WINDOW.width * 0.5
 	)
 
 	running = True

@@ -118,25 +118,36 @@ class KinematicEntity(Entity):
 	def __init__(
 		self,
 		p_position: Vec2,
-		p_rotation: float,
-		p_velocity: Vec2 | None = None,
-		p_angularVelocity: float | None = None
+		p_rotation: float | None = None,
+		p_direction: Vec2 | None = None, #this way we can take either rotation or velocity
+		p_speed: float = 0.0
 	):
+		if p_direction is None and p_rotation is not None:
+			direction = Vec2(math.cos(p_rotation), math.sin(p_rotation))
+			rotation = p_rotation
+		elif p_rotation is None and p_direction is not None:
+			direction = p_direction
+			rotation = math.atan2(p_direction.y, p_direction.x)
+		else:
+			direction = Vec2(1.0, 0.0)
+			rotation = 0.0
 		Entity.__init__(
 			self,
 			p_position = p_position,
-			p_rotation = p_rotation
+			p_rotation = rotation
 		)
-		self._velocity: Vec2 = p_velocity if p_velocity is not None else Vec2(0.0, 0.0)
-		self._angularVelocity: float = p_angularVelocity if p_angularVelocity is not None else 0.0
+		self._speed = p_speed
+		self._direction = direction
+		self._velocity: Vec2 = direction * p_speed
 
 class Actor(KinematicEntity):
 	def __init__(
 		self,
 		p_position: Vec2,
-		p_rotation: float,
-		p_velocity: Vec2 | None,
-		p_angularVelocity: float | None,
+		p_rotation: float | None = None,
+		p_direction: Vec2 | None = None,
+		*,
+		p_speed: float,
 		p_health: float,
 		p_damage: float
 	):
@@ -144,8 +155,8 @@ class Actor(KinematicEntity):
 			self,
 			p_position = p_position,
 			p_rotation = p_rotation,
-			p_velocity = p_velocity,
-			p_angularVelocity = p_angularVelocity
+			p_direction = p_direction,
+			p_speed = p_speed
 		)
 		self._health: float = p_health
 		self._damage: float = p_damage
