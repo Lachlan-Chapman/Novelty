@@ -13,7 +13,7 @@ class Entity:
 		self,
 		p_position: Vec2,
 		p_rotation: float | None = None,
-		p_direction: float | None = None
+		p_direction: Vec2 | None = None
 	):
 		if p_direction is not None and p_rotation is not None:
 			direction = p_direction
@@ -189,6 +189,7 @@ class Actor(KinematicEntity):
 			p_direction = p_direction,
 			p_speed = p_speed
 		)
+		self._maxHealth: float = p_health
 		self._health: float = p_health
 		self._damage: float = p_damage
 	
@@ -196,6 +197,10 @@ class Actor(KinematicEntity):
 		self._health -= p_damage
 		if self._health <= 0:
 			self._alive = False
+
+	@property
+	def maxHealth(self) -> float:
+		return self._maxHealth
 
 	@property
 	def health(self) -> float:

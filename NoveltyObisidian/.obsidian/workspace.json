@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ARCHITECTURE/Dependency.md",
+                "file": "IDEAS/Alien Lore.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Dependency"
+              "title": "Alien Lore"
             }
           }
         ]
@@ -185,9 +185,14 @@
   },
   "active": "64f4ff6073415c4a",
   "lastOpenFiles": [
+    "IDEAS/Alien Lore.md",
+    "04_FACTORY/ENERGY/Solar.md",
+    "04_FACTORY/ENERGY/Energy.md",
+    "06_STATION/DEFENSE/Self Destruct.md",
+    "06_STATION/WEAPONS/Weapons.md",
+    "ARCHITECTURE/Dependency.md",
     "ARCHITECTURE/Composition.md",
     "ARCHITECTURE/Inheritence.md",
-    "ARCHITECTURE/Dependency.md",
     "ARCHITECTURE/Inheritance VS Composition.md",
     "06_STATION/BOTS/Platinum Dome Bot.md",
     "ARCHITECTURE",
@@ -206,12 +211,7 @@
     "04_FACTORY/PRODUCTION/Production.md",
     "04_FACTORY/PROCESSING/Fluid.md",
     "06_STATION/DEFENSE/Shield.md",
-    "06_STATION/DEFENSE/Self Destruct.md",
     "04_FACTORY/ENERGY/Electric Generator.md",
-    "04_FACTORY/ENERGY/Electric Motor.md",
-    "04_FACTORY/ENERGY/Energy.md",
-    "04_FACTORY/ENERGY/Engine.md",
-    "04_FACTORY/ENERGY/Fission.md",
     "04_FACTORY/PRODUCTION/Ammo",
     "01_SOLAR_SYSTEM/Planets",
     "01_SOLAR_SYSTEM/PLANETS",

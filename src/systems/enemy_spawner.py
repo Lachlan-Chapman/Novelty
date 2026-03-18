@@ -27,7 +27,7 @@ class EnemySpawner:
 		self._spawnFinish: bool = False
 		self._spawnFinishTime: float = 0.0
 
-		self._enemySpeed: float = 20.0
+		self._enemySpeed: float = 50.0
 
 		self._spawnCount = 0
 		

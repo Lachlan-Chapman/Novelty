@@ -36,6 +36,6 @@ class Window:
 screen_size = pygame.display.Info()
 WINDOW: Window = Window(
 	p_width = screen_size.current_w // 1.5,
-	p_height = screen_size.current_h // 1.5,
+	p_height = screen_size.current_w // 1.5,
 	p_name = "Novelty | Genisis"
 )

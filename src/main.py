@@ -18,6 +18,8 @@ from gameplay.weapon import Weapon, MissileLauncher
 
 from systems.enemy_spawner import EnemySpawner
 
+from ui.gui import GUI
+
 def main():
 
 	enemy_spawner = EnemySpawner(
@@ -37,6 +39,8 @@ def main():
 		p_damage = 0
 	)
 	#ENTITY_REGISTRY.add(test_enemy)
+
+	font = pygame.font.SysFont(None, 36)
 
 	running = True
 	while running:
@@ -66,10 +70,13 @@ def main():
 		ENTITY_REGISTRY.removeDead()
 
 		#Render
-		WINDOW.screen.fill((20, 20, 20))
+		WINDOW.screen.fill((20, 20, 20)) #clear screen
+
 		PLAYER._armory.debugDraw()
 		ENTITY_REGISTRY.draw()
-		pygame.display.flip()
+
+		GUI.draw() #top layer above all else
+		pygame.display.flip() #show render
 	#Safely Exit
 	pygame.quit()
 	sys.exit(0)
