@@ -151,5 +151,5 @@ class Vec2i:
 	def copy(self) -> "Vec2i":
 		return Vec2i(self.x, self.y)
 
-	def toTuple(self) -> tuple[int, int]:
+	def tuple(self) -> tuple[int, int]:
 		return (self.x, self.y)

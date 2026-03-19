@@ -1,7 +1,7 @@
 import pygame
 from entities.player import PLAYER
 from core.vector import Vec2
-from ui.progress_bar import ProgressBar
+from ui.widgets import ProgressBar
 from core.utils import toScreenSpace
 class HeadsUpDisplay:
 	def __init__(self):
@@ -16,8 +16,8 @@ class HeadsUpDisplay:
 		)
 
 	def drawHealth(self) -> None:
-		health_percentage = PLAYER.health / PLAYER.maxHealth
-		self._healthBar.draw(health_percentage)
+		self._healthBar.setValue(PLAYER.health / PLAYER.maxHealth)
+		self._healthBar.draw()
 
 	def draw(self) -> None:
 		self.drawHealth()

@@ -13,7 +13,7 @@ class Window:
 		self._name: str = p_name
 
 
-		self._screen: pygame.Surface = pygame.display.set_mode((self._width, self._height), pygame.RESIZABLE)
+		self._screen: pygame.Surface = pygame.display.set_mode((self._width, self._height), pygame.FULLSCREEN)
 		CONSOLE.info(f"Game Window Initialized {self._screen.get_size()}")
 		pygame.display.set_caption(p_name)
 
@@ -35,7 +35,7 @@ class Window:
 
 screen_size = pygame.display.Info()
 WINDOW: Window = Window(
-	p_width = screen_size.current_w // 1.5,
-	p_height = screen_size.current_w // 1.5,
+	p_width = screen_size.current_w,
+	p_height = screen_size.current_h,
 	p_name = "Novelty | Genisis"
 )
