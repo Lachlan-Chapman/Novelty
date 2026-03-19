@@ -9,12 +9,13 @@ from entities.entity import Entity, Actor
 
 from core.time import TIME
 from core.window import WINDOW
+from core.controls import Actions, INPUT_STATE
 
 from physics.collision import RectangleCollider
 from render.renderable import RectangleRenderable
 
 from gameplay.munition import Bullet, Missile, Pellet
-from gameplay.weapon import Weapon, MissileLauncher, Shotgun
+from gameplay.weapon import Weapon, Turret, MissileLauncher, Shotgun
 
 
 from systems.armory import Armory
@@ -59,12 +60,11 @@ class Player(Actor):
 		if isinstance(p_other, Actor):
 			p_other.applyDamage(p_other.damage)
 
-	def handleRotationInput(self, p_keys: ScancodeWrapper) -> None:
+	def handleRotationInput(self) -> None:
 		theta = 0.0
-		
-		if p_keys[pygame.K_a]:
+		if INPUT_STATE.isHeld(Actions.ROTATE_LEFT):
 			theta -= self._speed
-		if p_keys[pygame.K_d]:
+		if INPUT_STATE.isHeld(Actions.ROTATE_RIGHT):
 			theta += self._speed
 		self.offsetRotation(theta * TIME.deltaTime) #adjust to be rotating speed per second
 		
@@ -77,16 +77,18 @@ class Player(Actor):
 			p_direction = direction
 		)
 
-	def handleArmoryInput(self, p_keys: ScancodeWrapper) -> None:
-		if p_keys[pygame.K_SPACE]:
+	def handleArmoryInput(self) -> None:
+		if INPUT_STATE.isHeld(Actions.SHOOT):
 			self._armory.shoot(p_ignoreColliders = set([self._collider]))
+		if INPUT_STATE.isPressed(Actions.NEXT_WEAPON):
+			self._armory.nextWeapon()
+		if INPUT_STATE.isPressed(Actions.PREVIOUS_WEAPON):
+			self._armory.previousWeapon()
 			
 
-	def handleInput(self, p_keys: ScancodeWrapper) -> None:
-		#rotation
-		self.handleRotationInput(p_keys)
-		#shooting
-		self.handleArmoryInput(p_keys)
+	def handleInput(self) -> None:
+		self.handleRotationInput()
+		self.handleArmoryInput()
 
 	def draw(self):
 		super().draw()
@@ -102,24 +104,22 @@ PLAYER = Player(
 if PLAYER._renderer is not None:
 	PLAYER._renderer.setColor((255, 0, 0))
 
-# player._armory.addWeapon(
-# 	p_weapon = Weapon(
-# 		p_magazineSize = 5,
-# 		p_shotCooldown = 1,
-# 		p_reloadSpeed = 2
-# 	)
-# )
-# player._armory.addAmmo(Bullet, 100)
+PLAYER._armory.addWeapon(
+	p_weapon = Turret(
+		p_shotCooldown = 0.01
+	)
+)
+PLAYER._armory.addAmmo(Bullet, 500)
 
-# PLAYER._armory.addWeapon(
-# 	p_weapon = MissileLauncher(
-# 		p_magazineSize = 5,
-# 		p_shotCooldown = 1,
-# 		p_reloadSpeed = 2,
-# 		p_targetFOV = math.pi/2
-# 	)
-# )
-# PLAYER._armory.addAmmo(Missile, 100)
+PLAYER._armory.addWeapon(
+	p_weapon = MissileLauncher(
+		p_magazineSize = 5,
+		p_shotCooldown = 1,
+		p_reloadSpeed = 2,
+		p_targetFOV = math.pi/2
+	)
+)
+PLAYER._armory.addAmmo(Missile, 100)
 
 PLAYER._armory.addWeapon(
 	p_weapon = Shotgun(

@@ -6,6 +6,7 @@ pygame.init() #immediatly initialize before ANY OTHER object creation
 
 from core.window import WINDOW
 from core.time import TIME
+from core.controls import Actions, INPUT_STATE
 from systems.entity_registry import ENTITY_REGISTRY
 
 from core.vector import Vec2
@@ -47,17 +48,19 @@ def main():
 		TIME.update() #set delta time and total time
 
 		#event handling
+		INPUT_STATE.update()
+		
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				running = False
-			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+			if INPUT_STATE.isPressed(Actions.EXIT):
 				running = False
 
 		keys = pygame.key.get_pressed()
 		if keys[pygame.K_ESCAPE]:
 			running = False
 
-		PLAYER.handleInput(keys)
+		PLAYER.handleInput()
 
 		#Move for AI
 		enemy_spawner.spawnEnemy()

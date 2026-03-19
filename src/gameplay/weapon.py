@@ -105,7 +105,6 @@ class Pistol(Weapon):
 		p_magazineSize: int,
 		p_shotCooldown: float,
 		p_reloadSpeed: float,
-		p_targetFOV: float
 	):
 		Weapon.__init__(
 			self,
@@ -114,24 +113,7 @@ class Pistol(Weapon):
 			p_shotCooldown = p_shotCooldown,
 			p_reloadSpeed = p_reloadSpeed
 		)
-		self._targetFOV = p_targetFOV
 
-	def findTarget(self, p_barrel: Entity) -> Projectile | None:
-		target: Enemy | None = None
-		
-		enemies = ENTITY_REGISTRY.getEntities(Enemy)
-		closest_distance = float("inf")
-		for enemy in enemies: #get all enemies that are within the FOV
-			to_enemy = enemy.position - p_barrel.position
-			alignment = p_barrel.direction.dot(to_enemy.unit)
-			
-			if alignment >= math.cos(self._targetFOV / 2):
-				enemy_distance = to_enemy.magnitude
-				if enemy_distance < closest_distance: #store closest enemy within the FOV
-					closest_distance = enemy_distance
-					target = enemy
-		return target
-	
 	def createProjectile(self, p_barrel: Entity, p_ignoreColliders: list[Collider]) -> list[Projectile]:
 		return [BulletProjectile(
 			p_position = p_barrel.position,
@@ -143,6 +125,18 @@ class Pistol(Weapon):
 		return super().shoot(
 			p_barrel = p_barrel,
 			p_friendlies = p_friendlies
+		)
+	
+class Turret(Pistol):
+	def __init__(
+		self,
+		p_shotCooldown: float
+	):
+		Pistol.__init__(
+			self,
+			p_magazineSize = 1,
+			p_shotCooldown = p_shotCooldown,
+			p_reloadSpeed = 0
 		)
 
 class MissileLauncher(Weapon):

@@ -1,3 +1,4 @@
+import pygame
 from core.vector import Vec2
 from core.window import WINDOW
 
@@ -10,6 +11,8 @@ class GraphicalUserInterface:
 			WINDOW.width / WINDOW.height,
 			1
 		)
+		pygame.font.init()
+
 		self._HUD = HeadsUpDisplay()
 
 	def draw(self):

@@ -61,8 +61,8 @@ class Text(Widget):
 		self._value: str = self._value if self._value is not None else ""
 	
 	def draw(self) -> None:
-		text_surface = pygame.font.render(self._value, True, self._color)
-		WINDOW.screen.blit(text_surface, self._position.tuple)
+		text_surface = self._font.render(self._value, True, self._color)
+		WINDOW.screen.blit(text_surface, self._position.tuple())
 
 
 
