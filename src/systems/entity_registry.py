@@ -1,4 +1,5 @@
 from core.console import CONSOLE
+from core.window import WINDOW
 from entities.entity import Entity
 class EntityRegistry:
 	def __init__(self):
@@ -25,9 +26,18 @@ class EntityRegistry:
 		else:
 			CONSOLE.warn("entityRegistry.add() was given not Entity type")
 
+	def outOfBounds(self, p_entity: Entity) -> bool:
+		#kill all entities out side of the screen
+			if p_entity._transform.position.x < 0 or p_entity._transform.position.x > WINDOW.width:
+				return True
+			if p_entity._transform.position.y < 0 or p_entity._transform.position.y > WINDOW.height:
+				return True
+
 	def update(self) -> None: #asks all entities to update themseleves for PURELY internal data if they have such logic
 		for entity in self._entities:
 			entity.update()
+			entity._alive = entity._alive and not self.outOfBounds(entity)
+			
 
 	def handleCollision(self) -> None:
 		for entity in self._entities:
