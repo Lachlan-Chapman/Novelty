@@ -194,10 +194,10 @@ class MissileLauncher(Weapon):
 		self._debugRenderable.draw(p_barrel.position, right_theta)
 		
 	
-	def shoot(self, p_barrel: Entity, p_friendlies: list[Collider]) -> Projectile | None:
+	def shoot(self, p_barrel: Entity, p_mask: int) -> Projectile | None:
 		return super().shoot(
 			p_barrel = p_barrel,
-			p_friendlies = p_friendlies
+			p_mask = p_mask
 		)
 
 class Shotgun(Weapon):
@@ -247,8 +247,8 @@ class Shotgun(Weapon):
 		self._debugRenderable.draw(p_barrel.position, right_theta)
 		
 	
-	def shoot(self, p_barrel: Entity, p_friendlies: list[Collider]) -> Projectile | None:
+	def shoot(self, p_barrel: Entity, p_mask: int) -> Projectile | None:
 		return super().shoot(
 			p_barrel = p_barrel,
-			p_friendlies = p_friendlies
+			p_mask = p_mask
 		)

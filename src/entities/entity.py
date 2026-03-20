@@ -93,6 +93,11 @@ class Entity:
 	def update(self) -> None:
 		self.updatePosition()
 		self.updateRotation()
+		#kill all entities out side of the screen
+		if self._transform.position.x < 0 or self._transform.position.x > WINDOW.width:
+			self._alive = False
+		if self._transform.position.y < 0 or self._transform.position.y > WINDOW.height:
+			self._alive = False
 
 	#COLLISIONS
 	def updateGeometry(self) -> None:

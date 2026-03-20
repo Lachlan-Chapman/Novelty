@@ -79,7 +79,7 @@ class Player(Actor):
 
 	def handleArmoryInput(self) -> None:
 		if INPUT_STATE.isHeld(Actions.SHOOT):
-			self._armory.shoot(p_mask = Groups.ENEMY | Groups.PROJECTILE)
+			self._armory.shoot(p_mask = Groups.ENEMY)
 		if INPUT_STATE.isPressed(Actions.NEXT_WEAPON):
 			self._armory.nextWeapon()
 		if INPUT_STATE.isPressed(Actions.PREVIOUS_WEAPON):
