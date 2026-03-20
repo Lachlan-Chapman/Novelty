@@ -64,8 +64,6 @@ class Text(Widget):
 		text_surface = self._font.render(self._value, True, self._color)
 		WINDOW.screen.blit(text_surface, self._position.tuple())
 
-
-
 class ProgressBar(Widget):
 	def __init__(
 		self,

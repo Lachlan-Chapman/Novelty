@@ -6,15 +6,20 @@ from core.utils import clamp
 class Collider:
 	def __init__(
 		self,
-		p_ignoreColliders: set["Collider"] | None = None
+		p_group: int = 0, #what group do i live in for others to know if they can be hit by me
+		p_mask: int = 0 #what are the other groups i can intersect with
 	):
-		self._ignoreColliders: set["Collider"] = p_ignoreColliders if p_ignoreColliders is not None else set()
+		self._group: int = p_group
+		self._mask: int = p_mask
 		self._position: Vec2 = Vec2(0.0, 0.0)
 		self._canCollide: bool = False #this collider is used as a stub collider
 		self._collisionCount: int = 0
 
-	def updateIgnoreColliders(self, p_ignoreColliders: set["Collider"]) -> None:
-		self._ignoreColliders = p_ignoreColliders
+	def updateGroup(self, p_group: int) -> None:
+		self._group = p_group
+
+	def updateMask(self, p_mask: int) -> None:
+		self._mask = p_mask
 
 	def canCollide(self, p_canCollide: bool) -> None:
 		self._canCollide = p_canCollide
@@ -69,21 +74,18 @@ class Collider:
 		if not self._canCollide:
 			return False
 		
-		if p_other in self._ignoreColliders or self in p_other._ignoreColliders:
-			return False
-	
-		
-		if isinstance(self, CircleCollider) and isinstance(p_other, CircleCollider):
-			return Collider.collideCircleCircle(self, p_other)
-		
-		if isinstance(self, CircleCollider) and isinstance(p_other, RectangleCollider):
-			return Collider.collideCircleRectangle(self, p_other)
-		
-		if isinstance(self, RectangleCollider) and isinstance(p_other, CircleCollider):
-			return Collider.collideCircleRectangle(p_other, self) #swap to make sure its rect upon circle
-		
-		if isinstance(self, PolygonCollider) and isinstance(p_other, PolygonCollider):
-			return Collider.collidePolygonPolygon(self, p_other)
+		if (p_other._group & self._mask) != 0: #is the other objects type apart of my mask of what i can hit?
+			if isinstance(self, CircleCollider) and isinstance(p_other, CircleCollider):
+				return Collider.collideCircleCircle(self, p_other)
+			
+			if isinstance(self, CircleCollider) and isinstance(p_other, RectangleCollider):
+				return Collider.collideCircleRectangle(self, p_other)
+			
+			if isinstance(self, RectangleCollider) and isinstance(p_other, CircleCollider):
+				return Collider.collideCircleRectangle(p_other, self) #swap to make sure its rect upon circle
+			
+			if isinstance(self, PolygonCollider) and isinstance(p_other, PolygonCollider):
+				return Collider.collidePolygonPolygon(self, p_other)
 		
 		return False #default if its not one of those types
 
@@ -95,11 +97,13 @@ class CircleCollider(Collider):
 	def __init__(
 		self,
 		p_radius: float,
-		p_ignoreColliders: set[Collider] | None = None
+		p_group: int,
+		p_mask: int
 	):
 		Collider.__init__(
 			self,
-			p_ignoreColliders = p_ignoreColliders
+			p_group = p_group,
+			p_mask = p_mask
 		)
 		self._radius: float = p_radius
 		self._canCollide = True
@@ -116,11 +120,13 @@ class CircleCollider(Collider):
 class PolygonCollider(Collider):
 	def __init__(
 			self,
-			p_ignoreCollides: set[Collider] | None = None
+			p_group: int,
+			p_mask: int
 		):
 		Collider.__init__(
 			self,
-			p_ignoreColliders = p_ignoreCollides
+			p_group = p_group,
+			p_mask = p_mask
 		)
 		self._rotation = 0.0
 		self._vertices: list[Vec2] = []
@@ -150,11 +156,13 @@ class RectangleCollider(PolygonCollider):
 	def __init__(
 		self,
 		p_size: Vec2,
-		p_ignoreColliders: set[Collider] | None = None
+		p_group: int,
+		p_mask: int,
 	):
 		PolygonCollider.__init__(
 			self,
-			p_ignoreCollides = p_ignoreColliders
+			p_group = p_group,
+			p_mask = p_mask
 		)
 		self._size: Vec2 = p_size
 		self._halfSize: Vec2 = p_size * 0.5

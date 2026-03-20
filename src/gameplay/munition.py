@@ -1,7 +1,3 @@
-import math
-
-from core.time import TIME
-from core.window import WINDOW
 from core.vector import Vec2
 from core.transform import Transform
 

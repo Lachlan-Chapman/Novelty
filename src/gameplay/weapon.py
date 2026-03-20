@@ -1,7 +1,9 @@
 import math
+
 from core.utils import randomRange
-from core.time import TIME
 from core.vector import Vec2
+from core.time import TIME
+
 from physics.collision import Collider
 from render.renderable import LineRenderable
 
@@ -10,6 +12,7 @@ from entities.enemy import Enemy
 from entities.projectile import Projectile, BulletProjectile, MisslieProjectile, PelletProjectile
 
 from gameplay.munition import Munition, Bullet, Missile, Pellet
+
 from systems.entity_registry import ENTITY_REGISTRY
 
 
@@ -56,10 +59,10 @@ class Weapon:
 			and self._bulletCount > 0
 		)
 	
-	def createProjectile(self, p_barrel: Entity, p_ignoreColliders: list[Collider]) -> list[Projectile]:
+	def createProjectile(self, p_barrel: Entity, p_mask: int) -> list[Projectile]:
 		pass
 
-	def shoot(self, p_barrel: Entity, p_friendlies: list[Collider]) -> Projectile | None:
+	def shoot(self, p_barrel: Entity, p_mask: int) -> Projectile | None:
 		if not self.canShoot():
 			return None
 
@@ -69,7 +72,7 @@ class Weapon:
 
 		return self.createProjectile(
 			p_barrel = p_barrel,
-			p_ignoreColliders = p_friendlies
+			p_mask = p_mask
 		)
 
 	def debugDraw(self, p_barrel: Entity) -> None:
@@ -114,17 +117,17 @@ class Pistol(Weapon):
 			p_reloadSpeed = p_reloadSpeed
 		)
 
-	def createProjectile(self, p_barrel: Entity, p_ignoreColliders: list[Collider]) -> list[Projectile]:
+	def createProjectile(self, p_barrel: Entity, p_mask: int) -> list[Projectile]:
 		return [BulletProjectile(
 			p_position = p_barrel.position,
 			p_direction = p_barrel.direction,
-			p_ignoreColliders = p_ignoreColliders
+			p_mask = p_mask
 		)]
 
-	def shoot(self, p_barrel: Entity, p_friendlies: list[Collider]) -> Projectile | None:
+	def shoot(self, p_barrel: Entity, p_mask: int) -> Projectile | None:
 		return super().shoot(
 			p_barrel = p_barrel,
-			p_friendlies = p_friendlies
+			p_mask = p_mask
 		)
 	
 class Turret(Pistol):
@@ -173,13 +176,13 @@ class MissileLauncher(Weapon):
 					target = enemy
 		return target
 	
-	def createProjectile(self, p_barrel, p_ignoreColliders) -> list[Projectile]:
+	def createProjectile(self, p_barrel: Entity, p_mask: int) -> list[Projectile]:
 		return [MisslieProjectile(
 			p_target = self.findTarget(p_barrel),
 			p_position = p_barrel.position,
 			p_rotation = p_barrel.rotation,
 			p_direction = p_barrel.direction,
-			p_ignoreColliders = p_ignoreColliders
+			p_mask = p_mask
 		)]
 	
 	def debugDraw(self, p_barrel: Entity) -> None:
@@ -216,11 +219,10 @@ class Shotgun(Weapon):
 		self._spreadAngle = p_spreadAngle
 		self._pelletCount = p_pelletCount
 
-	def createProjectile(self, p_barrel, p_ignoreColliders) -> list[Projectile]:
+	def createProjectile(self, p_barrel: Entity, p_mask: int) -> list[Projectile]:
 		pellets = []
 		half_theta = self._spreadAngle / 2
 		
-		ignore_pellets = set(p_ignoreColliders) if p_ignoreColliders is not None else set()
 		for _i in range(self._pelletCount):
 			theta = randomRange(
 				p_min = p_barrel.rotation - half_theta,
@@ -231,12 +233,9 @@ class Shotgun(Weapon):
 				p_position = p_barrel.position,
 				p_rotation = None,
 				p_direction = direction,
-				p_ignoreColliders = ignore_pellets
+				p_mask = p_mask
 			)
-			ignore_pellets.add(pellet.collider)
-			pellets.append(
-				pellet
-			)
+			pellets.append(pellet)
 		return pellets
 	
 	def debugDraw(self, p_barrel: Entity) -> None:

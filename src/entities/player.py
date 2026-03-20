@@ -1,22 +1,18 @@
-import pygame
-from pygame.key import ScancodeWrapper
 import math
 
 from core.vector import Vec2
-
-
-from entities.entity import Entity, Actor
-
 from core.time import TIME
 from core.window import WINDOW
 from core.controls import Actions, INPUT_STATE
 
 from physics.collision import RectangleCollider
+from physics.groups import Groups
 from render.renderable import RectangleRenderable
+
+from entities.entity import Entity, Actor
 
 from gameplay.munition import Bullet, Missile, Pellet
 from gameplay.weapon import Weapon, Turret, MissileLauncher, Shotgun
-
 
 from systems.armory import Armory
 from systems.entity_registry import ENTITY_REGISTRY
@@ -42,7 +38,11 @@ class Player(Actor):
 			p_damage = p_damage
 		)
 		self._transform.size = p_size
-		self._collider = RectangleCollider(p_size)
+		self._collider = RectangleCollider(
+			p_size,
+			p_group = Groups.PLAYER,
+			p_mask = Groups.ENEMY | Groups.PROJECTILE
+		)
 
 		self._renderer = RectangleRenderable(p_size)
 		
@@ -79,7 +79,7 @@ class Player(Actor):
 
 	def handleArmoryInput(self) -> None:
 		if INPUT_STATE.isHeld(Actions.SHOOT):
-			self._armory.shoot(p_ignoreColliders = set([self._collider]))
+			self._armory.shoot(p_mask = Groups.ENEMY | Groups.PROJECTILE)
 		if INPUT_STATE.isPressed(Actions.NEXT_WEAPON):
 			self._armory.nextWeapon()
 		if INPUT_STATE.isPressed(Actions.PREVIOUS_WEAPON):

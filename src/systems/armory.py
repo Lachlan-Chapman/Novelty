@@ -6,7 +6,9 @@ from core.vector import Vec2
 from core.transform import Transform
 
 from physics.collision import Collider
+from physics.groups import Groups
 from render.renderable import RectangleRenderable
+
 
 
 from entities.entity import Entity
@@ -72,13 +74,13 @@ class Armory:
 	#FIRING
 	def shoot(
 		self,
-		p_ignoreColliders: set[Collider] | None = None
+		p_mask: int = Groups.PLAYER | Groups.ENEMY | Groups.PROJECTILE,
 	) -> None:
 		if len(self._weapons) <= 0:
 			return
 
 		weapon = self._weapons[self._currentWeapon]
-		projectile = weapon.shoot(self._barrel, p_ignoreColliders) #will have the new projectile made if it did shoot
+		projectile = weapon.shoot(self._barrel, p_mask) #will have the new projectile made if it did shoot
 		if projectile is not None:
 			if weapon.requestingReload and not weapon.reloading: #has the weapon exhasuted its magazine
 				if self._ammo.get(weapon.munition, 0) > 0:  #do we have ammo in the armory to reload the gun with?

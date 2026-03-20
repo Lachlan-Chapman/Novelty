@@ -4,6 +4,7 @@ from core.window import WINDOW
 from core.vector import Vec2
 
 from physics.collision import Collider, CircleCollider
+from physics.groups import Groups
 from render.renderable import CircleRenderable
 
 from entities.entity import Entity, Actor
@@ -17,7 +18,7 @@ class Projectile(Actor):
 		p_position: Vec2,
 		p_rotation: float | None = None,
 		p_direction: Vec2 | None = None,
-		p_ignoreColliders: set[Collider] | None = None,
+		p_mask: int = Groups.PLAYER | Groups.ENEMY | Groups.PROJECTILE
 	):
 		Actor.__init__(
 			self,
@@ -32,7 +33,8 @@ class Projectile(Actor):
 
 		self._collider = CircleCollider(
 			p_radius = p_munition.radius,
-			p_ignoreColliders = p_ignoreColliders
+			p_group = Groups.PROJECTILE,
+			p_mask = p_mask
 		)
 
 		self._renderer = CircleRenderable(p_munition.radius)
@@ -57,7 +59,7 @@ class BulletProjectile(Projectile):
 		p_position: Vec2,
 		p_rotation: float | None = None,
 		p_direction: Vec2 | None = None,
-		p_ignoreColliders: set[Collider] | None = None,
+		p_mask: int = Groups.PLAYER | Groups.ENEMY | Groups.PROJECTILE,
 		p_munition: Munition = Bullet()
 	):
 		Projectile.__init__(
@@ -66,7 +68,7 @@ class BulletProjectile(Projectile):
 			p_position = p_position,
 			p_rotation = p_rotation,
 			p_direction = p_direction,
-			p_ignoreColliders = p_ignoreColliders
+			p_mask = p_mask
 		)
 
 	def updatePosition(self): #straight line bullet behaviour by default
@@ -80,7 +82,7 @@ class MisslieProjectile(Projectile):
 		p_position: Vec2,
 		p_rotation: float | None = None,
 		p_direction: Vec2 | None = None,
-		p_ignoreColliders: set[Collider] | None = None,
+		p_mask: int = Groups.PLAYER | Groups.ENEMY | Groups.PROJECTILE,
 		p_munition: Munition = Missile()
 	):
 		Projectile.__init__(
@@ -89,7 +91,7 @@ class MisslieProjectile(Projectile):
 			p_position = p_position,
 			p_rotation = p_rotation,
 			p_direction = p_direction,
-			p_ignoreColliders = p_ignoreColliders
+			p_mask = p_mask
 		)
 		self._target: Entity = p_target
 
@@ -108,7 +110,7 @@ class PelletProjectile(BulletProjectile):
 		p_position: Vec2,
 		p_rotation: float | None = None,
 		p_direction: Vec2 | None = None,
-		p_ignoreColliders: set[Collider] | None = None,
+		p_mask: int = Groups.PLAYER | Groups.ENEMY | Groups.PROJECTILE,
 		p_munition: Munition = Pellet()
 	):
 		BulletProjectile.__init__(
@@ -116,6 +118,6 @@ class PelletProjectile(BulletProjectile):
 			p_position = p_position,
 			p_rotation = p_rotation,
 			p_direction = p_direction,
-			p_ignoreColliders = p_ignoreColliders,
+			p_mask = p_mask,
 			p_munition = p_munition
 		)

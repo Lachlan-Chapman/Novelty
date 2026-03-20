@@ -3,6 +3,7 @@ from core.time import TIME
 from core.vector import Vec2
 
 from physics.collision import CircleCollider
+from physics.groups import Groups
 from render.renderable import CircleRenderable
 
 from entities.entity import Entity, Actor
@@ -35,7 +36,11 @@ class Enemy(Actor):
 			p_damage = p_damage
 		)
 		self._transform.size = Vec2(p_radius, p_radius)
-		self._collider = CircleCollider(p_radius)
+		self._collider = CircleCollider(
+			p_radius,
+			p_group = Groups.ENEMY,
+			p_mask = Groups.ENEMY | Groups.PLAYER | Groups.PROJECTILE
+		)
 		self._renderer = CircleRenderable(p_radius)
 		self._speed: float = p_speed
 

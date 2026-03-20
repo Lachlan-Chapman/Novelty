@@ -27,7 +27,7 @@ class EnemySpawner:
 		self._spawnFinish: bool = False
 		self._spawnFinishTime: float = 0.0
 
-		self._enemySpeed: float = 50.0
+		self._enemySpeed: float = 200.0
 
 		self._spawnCount = 0
 		
@@ -41,6 +41,7 @@ class EnemySpawner:
 		
 		speed = self._enemySpeed * (self._spawnCount * 0.3)
 		speed = clamp(speed, 20, speed)
+		speed = self._enemySpeed
 
 		self._spawnSpeed = clamp(
 			self._spawnSpeed,
@@ -57,7 +58,7 @@ class EnemySpawner:
 			Enemy(
 				p_position = spawn_location,
 				p_radius = 20,
-				p_speed = 20,
+				p_speed = speed,
 				p_health = 100.0,
 				p_damage = 100.0,
 				p_target = self._target
