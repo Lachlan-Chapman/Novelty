@@ -17,17 +17,19 @@ class EnemySpawner:
 	def __init__(
 		self,
 		p_target: Player,
-		p_spawnSpeed: float,
+		p_spawnTime: float,
 		p_spawnRadius: float
 	):
 		self._target: Player = p_target
 		self._spawnRadius: float = p_spawnRadius
 
-		self._spawnSpeed: float = p_spawnSpeed
+		self._spawnTime: float = p_spawnTime
+		self._currentSpawnTime: float = p_spawnTime
 		self._spawnFinish: bool = False
 		self._spawnFinishTime: float = 0.0
 
 		self._enemySpeed: float = 200.0
+		self._currentEnemySpeed: float = 200
 
 		self._spawnCount = 0
 		
@@ -39,15 +41,8 @@ class EnemySpawner:
 		if not self.canSpawn():
 			return False
 		
-		speed = self._enemySpeed * (self._spawnCount * 0.3)
-		speed = clamp(speed, 20, speed)
-		speed = self._enemySpeed
-
-		self._spawnSpeed = clamp(
-			self._spawnSpeed,
-			2,
-			1 / (self._spawnCount + 1)
-		)
+		print(f"spawning enemy @ {TIME._totalTime}")
+		self._currentEnemySpeed *= 1.05
 
 		random_theta = random.random() * math.tau
 		spawn_location = self._target._transform.position + Vec2(
@@ -58,12 +53,14 @@ class EnemySpawner:
 			Enemy(
 				p_position = spawn_location,
 				p_radius = 20,
-				p_speed = speed,
+				p_speed = self._currentEnemySpeed,
 				p_health = 100.0,
 				p_damage = 100.0,
 				p_target = self._target
 			)
 		)
+		
+		self._spawnFinishTime = TIME.time + self._currentSpawnTime
+		self._currentSpawnTime *= 0.985
 		self._spawnCount += 1
-		self._spawnFinishTime = TIME.time + self._spawnSpeed
 		return True

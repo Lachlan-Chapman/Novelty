@@ -16,7 +16,6 @@ class HeadsUpDisplay:
 
 		self._weaponText: Text = Text(
 			p_position = toScreenSpace(Vec2(0.05, 0.95)),
-			p_size = toScreenSpace(Vec2(0, 0)),
 			p_color = (255, 255, 255),
 			p_font = None,
 			p_fontSize = 40

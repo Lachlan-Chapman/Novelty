@@ -43,7 +43,6 @@ class Text(Widget):
 	def __init__(
 		self,
 		p_position: Vec2i,
-		p_size: int,
 		p_color: tuple[int, int, int],
 		p_font: str | None = None,
 		*,
@@ -53,7 +52,7 @@ class Text(Widget):
 		Widget.__init__(
 			self,
 			p_position = p_position,
-			p_size = p_size,
+			p_size = 0, #not needed for text
 			p_value = p_text
 		)
 		self._color = p_color
@@ -61,8 +60,10 @@ class Text(Widget):
 		self._value: str = self._value if self._value is not None else ""
 	
 	def draw(self) -> None:
-		text_surface = self._font.render(self._value, True, self._color)
-		WINDOW.screen.blit(text_surface, self._position.tuple())
+		if self._value is not None:
+			text_surface = self._font.render(self._value, True, self._color)
+			text_rect = text_surface.get_rect(center = (self._position.x, self._position.y))
+			WINDOW.screen.blit(text_surface, self._position.tuple())
 
 class ProgressBar(Widget):
 	def __init__(

@@ -94,6 +94,14 @@ class Player(Actor):
 		super().draw()
 		self._armory._barrel.draw() #player has to handle the visual representation of the barrel
 
+	def reset(self) -> None:
+		self._health = 500.0
+		self._alive = True
+		self._armory.reset()
+		self._armory.ammo[Bullet] = 500
+		self._armory.ammo[Missile] = 100
+		self._armory.ammo[Pellet] = 100
+
 PLAYER = Player(
 	p_rotationSpeed = math.pi,
 	p_health = 500.0,

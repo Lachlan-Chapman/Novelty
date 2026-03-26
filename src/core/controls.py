@@ -6,6 +6,7 @@ class Actions:
 	NEXT_WEAPON: str = "next_weapon"
 	PREVIOUS_WEAPON: str = "previous_weapon"
 	EXIT: str = "exit"
+	RESET: str = "reset"
 
 BINDINGS: dict[str, tuple[int, ...]] = {
 	Actions.ROTATE_LEFT: (pygame.K_a, pygame.K_LEFT),
@@ -13,7 +14,8 @@ BINDINGS: dict[str, tuple[int, ...]] = {
 	Actions.SHOOT: (pygame.K_SPACE,),
 	Actions.NEXT_WEAPON: (pygame.K_w, pygame.K_UP),
 	Actions.PREVIOUS_WEAPON: (pygame.K_s, pygame.K_DOWN),
-	Actions.EXIT: (pygame.K_ESCAPE,)
+	Actions.EXIT: (pygame.K_ESCAPE,),
+	Actions.RESET: (pygame.K_r,)
 }
 
 class InputState:

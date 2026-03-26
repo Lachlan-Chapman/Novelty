@@ -89,6 +89,12 @@ class Armory:
 			
 			ENTITY_REGISTRY.add(projectile) #register to (bullet/missile/pellet)(s) made
 
+	def reset(self) -> None:
+		for weapon in self._weapons:
+			weapon._bulletCount = weapon._magazineSize
+			weapon._shotFinish = 0.0
+			self._currentWeapon = 0
+
 	#GETTERS
 	@property
 	def weapons(self) -> list[Weapon]:

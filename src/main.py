@@ -7,43 +7,36 @@ pygame.init() #immediatly initialize before ANY OTHER object creation
 from core.window import WINDOW
 from core.time import TIME
 from core.controls import Actions, INPUT_STATE
+from core.console import CONSOLE
+
 from systems.entity_registry import ENTITY_REGISTRY
 
-from core.vector import Vec2
-
-from entities.enemy import Enemy
 from entities.player import PLAYER
-
-from gameplay.munition import Bullet, Missile
-from gameplay.weapon import Weapon, MissileLauncher
 
 from systems.enemy_spawner import EnemySpawner
 
 from ui.gui import GUI
 
-def main():
 
-	enemy_spawner = EnemySpawner(
+
+def reset_game() -> EnemySpawner:
+	CONSOLE.info("Game Reset")
+	ENTITY_REGISTRY.clear() #remove all entities
+	TIME.reset() #time back to 0
+	PLAYER.reset() #restore health and ammo
+
+
+	ENTITY_REGISTRY.add(PLAYER)
+	return EnemySpawner(
 		p_target = PLAYER,
-		p_spawnSpeed = 5,
-		p_spawnRadius = WINDOW.width * 0.5
+		p_spawnTime = 3,
+		p_spawnRadius = WINDOW.height * 0.65
 	)
 
-	test_enemy = Enemy(
-		p_position = Vec2(
-			PLAYER.position.x + 350,
-			PLAYER.position.y
-		),
-		p_radius = 20,
-		p_speed = 0.0,
-		p_health = 100.0,
-		p_damage = 0
-	)
-	#ENTITY_REGISTRY.add(test_enemy)
-
-	font = pygame.font.SysFont(None, 36)
-
+def main():
+	enemy_spawner: EnemySpawner = reset_game()
 	running = True
+	game_over = False
 	while running:
 		TIME.update() #set delta time and total time
 
@@ -53,8 +46,11 @@ def main():
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				running = False
-			if INPUT_STATE.isPressed(Actions.EXIT):
-				running = False
+		if INPUT_STATE.isPressed(Actions.EXIT):
+			running = False
+		if INPUT_STATE.isPressed(Actions.RESET):
+			enemy_spawner = reset_game()
+			
 
 		keys = pygame.key.get_pressed()
 		if keys[pygame.K_ESCAPE]:
@@ -72,6 +68,12 @@ def main():
 		#Clean Up
 		ENTITY_REGISTRY.removeDead()
 
+		if not PLAYER.alive:
+			game_over = True
+			TIME._timeScale = 0.0 #stop all time
+		else:
+			game_over = False
+
 		#Render
 		WINDOW.screen.fill((20, 20, 20)) #clear screen
 
@@ -79,6 +81,9 @@ def main():
 		ENTITY_REGISTRY.draw()
 
 		GUI.draw() #top layer above all else
+		if game_over is True:
+			GUI.drawGameOver()
+
 		pygame.display.flip() #show render
 	#Safely Exit
 	pygame.quit()

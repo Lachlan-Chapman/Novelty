@@ -1,6 +1,7 @@
 from core.console import CONSOLE
 from core.window import WINDOW
 from entities.entity import Entity
+from entities.enemy import Enemy
 class EntityRegistry:
 	def __init__(self):
 		self._entities: list[Entity] = []
@@ -28,16 +29,17 @@ class EntityRegistry:
 
 	def outOfBounds(self, p_entity: Entity) -> bool:
 		#kill all entities out side of the screen
-			if p_entity._transform.position.x < 0 or p_entity._transform.position.x > WINDOW.width:
-				return True
-			if p_entity._transform.position.y < 0 or p_entity._transform.position.y > WINDOW.height:
-				return True
+		if isinstance(p_entity, Enemy):
+			return False
+		if p_entity._transform.position.x < 0 or p_entity._transform.position.x > WINDOW.width:
+			return True
+		if p_entity._transform.position.y < 0 or p_entity._transform.position.y > WINDOW.height:
+			return True
 
 	def update(self) -> None: #asks all entities to update themseleves for PURELY internal data if they have such logic
 		for entity in self._entities:
 			entity.update()
 			entity._alive = entity._alive and not self.outOfBounds(entity)
-			
 
 	def handleCollision(self) -> None:
 		for entity in self._entities:
@@ -87,6 +89,14 @@ class EntityRegistry:
 			  
 	def getEntities(self, p_entityType: type[Entity]) -> list[Entity]:
 		return [entity for entity in self._entities if type(entity) == p_entityType]
+	
+	def clear(self) -> None:
+		self._entities = []
+		self._entityCount = 0 #makes it easier so i can avoid calling len(self._entites) every time i wanna quickly query it, also i think better readability
+		self._entityIdentityCounter = 0
+
+		self._currentCollisions = set()
+		self._previousCollisions = set()
 
 
 ENTITY_REGISTRY = EntityRegistry()

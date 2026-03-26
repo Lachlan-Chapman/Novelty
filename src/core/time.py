@@ -12,10 +12,14 @@ class Time:
 	
 	def update(self) -> None:
 		self._deltaTime = self._clock.tick(self._targetFPS) / 1000 #gets the true delta time but caps at the target fps | MAKE SURE TO /1000 as delta time should be in seconds
-		self._totalTime += self._deltaTime
+		self._totalTime += self._deltaTime * self.timeScale
 
 	def setTimeScale(self, p_scale: float):
 		self._timeScale = p_scale
+
+	def reset(self) -> None:
+		self._timeScale = 1.0
+		self._totalTime = 0.0
 
 	@property
 	def deltaTime(self):

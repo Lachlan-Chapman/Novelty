@@ -49,7 +49,7 @@ class Missile(Munition):
 		Munition.__init__(
 			self,
 			p_radius = 7.5,
-			p_damage = 50.0,
+			p_damage = 100.0,
 			p_speed = 450.0,
 			p_penetrationLimit = 1
 		)
@@ -59,7 +59,7 @@ class Pellet(Munition):
 		Munition.__init__(
 			self,
 			p_radius = 4,
-			p_damage = 100.0 / 7, #7 pellets defined hardcoded here | not great
+			p_damage = 100.0, #7 pellets defined hardcoded here | not great
 			p_speed = 500.0,
 			p_penetrationLimit = 1
 		)
